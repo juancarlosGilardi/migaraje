@@ -6,7 +6,7 @@ class Settings(BaseSettings):
 
     app_name: str = "MiGaraje API"
     database_url: str = "sqlite:///./migaraje.db"
-    secret_key: str = "dev-secret-change-in-production"
+    secret_key: str = "dev-secret-solo-para-desarrollo-cambiar-en-produccion"
     access_token_expire_minutes: int = 60 * 24 * 7  # 7 días
     cors_origins: str = "http://localhost:5173"
 
