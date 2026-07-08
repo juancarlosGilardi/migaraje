@@ -232,6 +232,23 @@ export default function VehicleDetail() {
         {kmError && <p className="mt-2 text-xs font-semibold text-red">{kmError.message}</p>}
       </div>
 
+      <div className="mt-3 flex gap-2">
+        <button
+          type="button"
+          onClick={() => navigate(`/vehicles/${vehicleId}/history`)}
+          className="flex-1 rounded-xl border border-line bg-card px-3 py-2.5 text-xs font-bold text-ink"
+        >
+          🕘 Historial
+        </button>
+        <button
+          type="button"
+          onClick={() => navigate(`/vehicles/${vehicleId}/upload`)}
+          className="flex-1 rounded-xl border border-cyan/40 bg-cyan/10 px-3 py-2.5 text-xs font-bold text-cyan"
+        >
+          🧾 Nueva factura
+        </button>
+      </div>
+
       {spec && (
         <>
           <h2 className="mt-5 mb-2 text-sm font-bold">Ficha de tu auto</h2>

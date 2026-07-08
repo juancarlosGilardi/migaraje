@@ -121,3 +121,68 @@ class PlanItemOut(BaseModel):
     days_remaining: int | None = None
     percent: float = 0
     status: str = "ok"
+
+
+# --- Historial de servicios / facturas ---
+class InvoiceItemOut(BaseModel):
+    description: str
+    amount: float
+
+
+class OilMatchOut(BaseModel):
+    matches: bool | None = None
+    message: str | None = None
+
+
+class InvoicePreviewOut(BaseModel):
+    """Vista previa de un XML SUNAT parseado, aún no guardado."""
+
+    upload_token: str
+    filename: str
+    is_xml: bool
+    invoice_number: str | None = None
+    issue_date: str | None = None
+    currency: str | None = None
+    supplier_name: str | None = None
+    supplier_ruc: str | None = None
+    items: list[InvoiceItemOut] = []
+    total: float | None = None
+    suggested_service_type: str | None = None
+    oil_match: OilMatchOut = OilMatchOut()
+    parse_error: str | None = None
+
+
+class ServiceRecordIn(BaseModel):
+    upload_token: str | None = None
+    service_date: date
+    km: int | None = Field(default=None, ge=0)
+    service_type: str = Field(min_length=2, max_length=120)
+    cost: float | None = Field(default=None, ge=0)
+    workshop: str | None = Field(default=None, max_length=160)
+    ruc: str | None = Field(default=None, max_length=20)
+    notes: str | None = Field(default=None, max_length=2000)
+
+
+class ServiceFileOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    filename: str
+    content_type: str
+    is_xml: bool = False
+
+
+class ServiceRecordOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    service_date: date
+    km: int | None
+    service_type: str
+    cost: float | None
+    workshop: str | None
+    ruc: str | None
+    notes: str | None
+    has_pdf: bool = False
+    has_xml: bool = False
+    files: list[ServiceFileOut] = []

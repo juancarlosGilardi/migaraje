@@ -1,7 +1,7 @@
 from datetime import date, datetime
 from typing import Any
 
-from sqlalchemy import JSON, Date, DateTime, ForeignKey, String, Text, func
+from sqlalchemy import JSON, Date, DateTime, ForeignKey, LargeBinary, Numeric, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db import Base
@@ -44,6 +44,9 @@ class Vehicle(Base):
     plan_items: Mapped[list["PlanItem"]] = relationship(
         back_populates="vehicle", cascade="all, delete-orphan"
     )
+    service_records: Mapped[list["ServiceRecord"]] = relationship(
+        back_populates="vehicle", cascade="all, delete-orphan"
+    )
 
 
 class OdometerLog(Base):
@@ -73,3 +76,36 @@ class PlanItem(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
     vehicle: Mapped[Vehicle] = relationship(back_populates="plan_items")
+
+
+class ServiceRecord(Base):
+    __tablename__ = "service_records"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    vehicle_id: Mapped[int] = mapped_column(ForeignKey("vehicles.id"), index=True)
+    service_date: Mapped[date] = mapped_column(Date, default=date.today)
+    km: Mapped[int | None]
+    service_type: Mapped[str] = mapped_column(String(120))
+    cost: Mapped[float | None] = mapped_column(Numeric(10, 2), nullable=True)
+    workshop: Mapped[str | None] = mapped_column(String(160), nullable=True)
+    ruc: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    notes: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+
+    vehicle: Mapped[Vehicle] = relationship(back_populates="service_records")
+    files: Mapped[list["ServiceFile"]] = relationship(
+        back_populates="service_record", cascade="all, delete-orphan"
+    )
+
+
+class ServiceFile(Base):
+    __tablename__ = "service_files"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    service_record_id: Mapped[int] = mapped_column(ForeignKey("service_records.id"), index=True)
+    filename: Mapped[str] = mapped_column(String(255))
+    content_type: Mapped[str] = mapped_column(String(100))
+    content: Mapped[bytes] = mapped_column(LargeBinary)
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+
+    service_record: Mapped[ServiceRecord] = relationship(back_populates="files")

@@ -1,6 +1,8 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import Garage from './screens/Garage'
+import History from './screens/History'
 import Login from './screens/Login'
+import UploadInvoice from './screens/UploadInvoice'
 import VehicleDetail from './screens/VehicleDetail'
 import { hasSession } from './auth'
 
@@ -27,6 +29,22 @@ function App() {
           element={
             <RequireAuth>
               <VehicleDetail />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/vehicles/:id/history"
+          element={
+            <RequireAuth>
+              <History />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/vehicles/:id/upload"
+          element={
+            <RequireAuth>
+              <UploadInvoice />
             </RequireAuth>
           }
         />

@@ -46,3 +46,51 @@ export type PlanItem = {
   percent: number
   status: PlanItemStatus
 }
+
+// --- Historial de servicios / facturas ---
+export type InvoiceItem = {
+  description: string
+  amount: number
+}
+
+export type OilMatch = {
+  matches: boolean | null
+  message: string | null
+}
+
+export type InvoicePreview = {
+  upload_token: string
+  filename: string
+  is_xml: boolean
+  invoice_number: string | null
+  issue_date: string | null
+  currency: string | null
+  supplier_name: string | null
+  supplier_ruc: string | null
+  items: InvoiceItem[]
+  total: number | null
+  suggested_service_type: string | null
+  oil_match: OilMatch
+  parse_error: string | null
+}
+
+export type ServiceFile = {
+  id: number
+  filename: string
+  content_type: string
+  is_xml: boolean
+}
+
+export type ServiceRecord = {
+  id: number
+  service_date: string
+  km: number | null
+  service_type: string
+  cost: number | null
+  workshop: string | null
+  ruc: string | null
+  notes: string | null
+  has_pdf: boolean
+  has_xml: boolean
+  files: ServiceFile[]
+}
