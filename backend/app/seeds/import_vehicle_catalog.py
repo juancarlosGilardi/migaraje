@@ -131,9 +131,23 @@ async def _fetch_models_for_make(
                     await asyncio.sleep(delay)
                     continue
                 res.raise_for_status()
-                names = sorted(
-                    {r["Model_Name"].strip() for r in res.json()["Results"] if r["Model_Name"]}
-                )
+                # GetModelsForMake hace matching parcial: para "Eagle" devuelve tambien
+                # resultados de "Eagle Trailer", "Eagle RV", "Eagle Coach", etc. Se filtra
+                # estrictamente por Make_Name exacto (case-insensitive) para no mezclar
+                # marcas distintas bajo el mismo nombre buscado.
+                make_lower = make.strip().lower()
+                results = [
+                    r
+                    for r in res.json()["Results"]
+                    if r["Model_Name"] and r.get("Make_Name", "").strip().lower() == make_lower
+                ]
+                # Dedup case-insensitive (el UNIQUE KEY de MySQL usa collation
+                # case-insensitive por defecto, así que "Premier" y "PREMIER" chocan).
+                seen: dict[str, str] = {}
+                for r in results:
+                    name = r["Model_Name"].strip()
+                    seen.setdefault(name.lower(), name)
+                names = sorted(seen.values())
                 return make, names
             except httpx.HTTPError as exc:
                 last_exc = exc
@@ -155,15 +169,21 @@ def _get_or_create_make(db, name: str, source: str) -> CatalogMake:
 
 
 def _upsert_models(db, make: CatalogMake, model_names: list[str], source: str) -> int:
+    # Comparación case-insensitive: el UNIQUE KEY (make_id, name) en MySQL usa collation
+    # case-insensitive por defecto, así que "Premier" y "PREMIER" son la misma clave ahí
+    # aunque en Python sean strings distintos. Si no se replica esa insensibilidad acá,
+    # una corrida puede intentar insertar ambas variantes y disparar un IntegrityError.
     existing = {
-        m.name for m in db.query(CatalogModel).filter(CatalogModel.make_id == make.id)
+        m.name.lower()
+        for m in db.query(CatalogModel).filter(CatalogModel.make_id == make.id)
     }
     added = 0
     for name in model_names:
-        if not name or name in existing:
+        key = name.lower() if name else ""
+        if not name or key in existing:
             continue
         db.add(CatalogModel(make_id=make.id, name=name, source=source))
-        existing.add(name)
+        existing.add(key)
         added += 1
     return added
 
@@ -202,19 +222,30 @@ async def import_from_nhtsa() -> None:
     try:
         makes_added = 0
         models_added = 0
+        skipped_makes: list[str] = []
         for make_name in makes:
             model_names = results.get(make_name, [])
-            make_row = db.query(CatalogMake).filter(CatalogMake.name == make_name).one_or_none()
-            is_new_make = make_row is None
-            make_row = _get_or_create_make(db, make_name, source="nhtsa")
+            try:
+                make_row = db.query(CatalogMake).filter(CatalogMake.name == make_name).one_or_none()
+                is_new_make = make_row is None
+                make_row = _get_or_create_make(db, make_name, source="nhtsa")
+                added = _upsert_models(db, make_row, model_names, source="nhtsa")
+                db.flush()  # detecta IntegrityError aqui, cerca de la marca que lo causo
+            except Exception as exc:  # noqa: BLE001 - se registra y se sigue con lo demas
+                db.rollback()
+                skipped_makes.append(make_name)
+                print(f"  [WARN] no se pudo guardar {make_name!r}: {exc}")
+                continue
             if is_new_make:
                 makes_added += 1
-            models_added += _upsert_models(db, make_row, model_names, source="nhtsa")
+            models_added += added
         db.commit()
         print(
             f"NHTSA importado: {makes_added} marcas nuevas, {models_added} modelos nuevos "
             f"(de {total_makes} marcas procesadas)."
         )
+        if skipped_makes:
+            print(f"  Marcas omitidas por error al guardar ({len(skipped_makes)}): {skipped_makes}")
     finally:
         db.close()
 
