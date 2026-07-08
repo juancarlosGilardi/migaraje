@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api, ApiError } from '../api/client'
 import type { Vehicle } from '../api/types'
 import { clearSession, sessionUser } from '../auth'
+import Combobox from '../components/Combobox'
 
 const inputCls =
   'w-full rounded-xl border border-line bg-surface px-3 py-2.5 text-sm text-ink placeholder:text-muted focus:border-cyan focus:outline-none'
@@ -55,11 +56,12 @@ function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
               </span>
             </p>
           </div>
+          <span className="shrink-0 text-lg text-muted">›</span>
         </Link>
         <button
           type="button"
           onClick={() => setEditingKm(!editingKm)}
-          className="ml-auto shrink-0 rounded-full border border-cyan/40 bg-cyan/10 px-3 py-1.5 text-xs font-bold text-cyan"
+          className="ml-1 shrink-0 rounded-full border border-cyan/40 bg-cyan/10 px-3 py-1.5 text-xs font-bold text-cyan"
         >
           ↻ km
         </button>
@@ -109,6 +111,20 @@ function AddVehicleForm({ onDone }: { onDone: () => void }) {
     initial_km: '',
   })
 
+  const makes = useQuery({
+    queryKey: ['catalog', 'makes'],
+    queryFn: () => api<string[]>('/api/catalog/makes'),
+    staleTime: 24 * 60 * 60 * 1000,
+    retry: 1,
+  })
+  const models = useQuery({
+    queryKey: ['catalog', 'models', form.brand],
+    queryFn: () => api<string[]>(`/api/catalog/models?make=${encodeURIComponent(form.brand)}`),
+    enabled: form.brand.trim().length > 1,
+    staleTime: 24 * 60 * 60 * 1000,
+    retry: 1,
+  })
+
   const create = useMutation({
     mutationFn: () =>
       api<Vehicle>('/api/vehicles', {
@@ -144,8 +160,26 @@ function AddVehicleForm({ onDone }: { onDone: () => void }) {
     >
       <p className="font-display text-sm font-bold">Nuevo auto</p>
       <div className="grid grid-cols-2 gap-2">
-        <input className={inputCls} placeholder="Marca (Toyota)" value={form.brand} onChange={set('brand')} required />
-        <input className={inputCls} placeholder="Modelo (RAV4)" value={form.model} onChange={set('model')} required />
+        <Combobox
+          value={form.brand}
+          onChange={(v) => setForm({ ...form, brand: v, model: '' })}
+          options={makes.data ?? []}
+          loading={makes.isPending}
+          placeholder="Marca (Toyota)"
+          required
+          emptyHint={
+            makes.isError ? 'Catálogo no disponible · escribe la marca' : 'Sin coincidencias · se usará el texto escrito'
+          }
+        />
+        <Combobox
+          value={form.model}
+          onChange={(v) => setForm({ ...form, model: v })}
+          options={models.data ?? []}
+          loading={form.brand.trim().length > 1 && models.isPending}
+          disabled={form.brand.trim().length <= 1}
+          placeholder="Modelo (RAV4)"
+          required
+        />
         <input className={inputCls} type="number" placeholder="Año (2022)" value={form.year} onChange={set('year')} required min={1950} max={2035} />
         <input className={inputCls} placeholder="Placa (BGR-742)" value={form.plate} onChange={set('plate')} required minLength={6} />
         <select className={inputCls} value={form.fuel} onChange={set('fuel')}>
