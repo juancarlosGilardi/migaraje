@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api, ApiError } from '../api/client'
 import type { Vehicle } from '../api/types'
@@ -38,22 +38,24 @@ function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
   return (
     <div className="rounded-2xl border border-line bg-gradient-to-br from-card2 to-card p-4">
       <div className="flex items-center gap-3">
-        <div className="grid size-12 place-items-center rounded-xl border border-cyan/25 bg-cyan/10 text-2xl">
-          {fuelEmoji(vehicle.fuel)}
-        </div>
-        <div className="min-w-0">
-          <p className="truncate font-semibold">
-            {vehicle.brand} {vehicle.model} {vehicle.year}
-          </p>
-          <p className="mt-0.5 flex items-center gap-2 text-xs text-muted">
-            <span className="rounded-md border border-line bg-bg/60 px-1.5 py-0.5 font-bold tracking-widest">
-              {vehicle.plate}
-            </span>
-            <span className="font-semibold text-ink">
-              {vehicle.current_km.toLocaleString('es-PE')} km
-            </span>
-          </p>
-        </div>
+        <Link to={`/vehicles/${vehicle.id}`} className="flex min-w-0 flex-1 items-center gap-3">
+          <div className="grid size-12 place-items-center rounded-xl border border-cyan/25 bg-cyan/10 text-2xl">
+            {fuelEmoji(vehicle.fuel)}
+          </div>
+          <div className="min-w-0">
+            <p className="truncate font-semibold">
+              {vehicle.brand} {vehicle.model} {vehicle.year}
+            </p>
+            <p className="mt-0.5 flex items-center gap-2 text-xs text-muted">
+              <span className="rounded-md border border-line bg-bg/60 px-1.5 py-0.5 font-bold tracking-widest">
+                {vehicle.plate}
+              </span>
+              <span className="font-semibold text-ink">
+                {vehicle.current_km.toLocaleString('es-PE')} km
+              </span>
+            </p>
+          </div>
+        </Link>
         <button
           type="button"
           onClick={() => setEditingKm(!editingKm)}

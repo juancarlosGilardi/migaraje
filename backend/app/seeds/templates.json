@@ -1,0 +1,82 @@
+[
+  {
+    "match_brand": "toyota",
+    "match_model": "rav4",
+    "spec": {
+      "oil": {
+        "viscosity": "0W-16",
+        "api_norm": "API SN / ILSAC GF-6A",
+        "capacity_liters": 4.7,
+        "note": "Si no hay 0W-16 disponible, usar 0W-20 y volver a 0W-16 en el siguiente cambio."
+      },
+      "tires": { "size": "225/60 R18", "psi": 33 },
+      "battery": { "ah": 60 },
+      "fuel": { "type": "Gasolina", "octane": "87+ (recomendado 91+)" }
+    },
+    "plan_items": [
+      {
+        "name": "Aceite y filtro de motor",
+        "interval_km": 10000,
+        "interval_months": 12,
+        "notes": "0W-16 sintético · API SN · 4.7 L con filtro. Talleres en Perú suelen recomendar cada 5,000 km por las condiciones de manejo locales; ajusta el intervalo si lo prefieres."
+      },
+      { "name": "Rotación de llantas", "interval_km": 10000, "interval_months": 6, "notes": null },
+      { "name": "Filtro de aire del motor", "interval_km": 30000, "interval_months": 24, "notes": null },
+      { "name": "Líquido de frenos", "interval_km": 40000, "interval_months": 24, "notes": null },
+      {
+        "name": "Revisión de cadena de distribución",
+        "interval_km": 100000,
+        "interval_months": null,
+        "notes": "Inspección; este motor no usa correa de reemplazo programado."
+      }
+    ]
+  },
+  {
+    "match_brand": "hyundai",
+    "match_model": "tucson",
+    "spec": {
+      "oil": {
+        "viscosity": "5W-20",
+        "api_norm": "API SN sintético",
+        "capacity_liters": 4.1,
+        "note": "Algunas fuentes indican 0W-20; confirma con la etiqueta bajo el capó o tu manual."
+      },
+      "tires": { "size": "225/60 R17", "psi": 33 },
+      "battery": { "ah": 56 },
+      "fuel": { "type": "Gasolina", "octane": "87+" }
+    },
+    "plan_items": [
+      {
+        "name": "Aceite y filtro de motor",
+        "interval_km": 10000,
+        "interval_months": 12,
+        "notes": "5W-20 sintético · 4.1 L con filtro. Uso severo (tráfico, viajes cortos): cada 6,000 km."
+      },
+      { "name": "Rotación de llantas", "interval_km": 10000, "interval_months": 6, "notes": null },
+      { "name": "Filtro de aire del motor", "interval_km": 20000, "interval_months": 24, "notes": null },
+      { "name": "Líquido de frenos", "interval_km": 40000, "interval_months": 24, "notes": null },
+      { "name": "Bujías", "interval_km": 100000, "interval_months": null, "notes": "Bujías de iridio (vida larga)" }
+    ]
+  },
+  {
+    "match_brand": "*",
+    "match_model": "*",
+    "spec": {
+      "oil": {
+        "viscosity": "Consulta tu manual",
+        "api_norm": "Consulta tu manual",
+        "capacity_liters": null,
+        "note": "No tenemos una plantilla específica para esta marca/modelo todavía. Edita estos valores con los de tu manual del propietario."
+      },
+      "tires": { "size": null, "psi": null },
+      "battery": { "ah": null },
+      "fuel": { "type": "Gasolina", "octane": null }
+    },
+    "plan_items": [
+      { "name": "Aceite y filtro de motor", "interval_km": 10000, "interval_months": 12, "notes": "Valor genérico; ajústalo con tu manual." },
+      { "name": "Rotación de llantas", "interval_km": 10000, "interval_months": 6, "notes": null },
+      { "name": "Filtro de aire del motor", "interval_km": 20000, "interval_months": 24, "notes": null },
+      { "name": "Líquido de frenos", "interval_km": 40000, "interval_months": 24, "notes": null }
+    ]
+  }
+]

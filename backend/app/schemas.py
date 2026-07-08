@@ -1,6 +1,7 @@
 from datetime import date
+from typing import Any
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, model_validator
 
 
 # --- Auth ---
@@ -60,6 +61,7 @@ class VehicleOut(BaseModel):
     fuel: str
     first_registration_year: int | None
     current_km: int = 0
+    spec: dict[str, Any] | None = None
 
 
 # --- Kilometraje ---
@@ -76,3 +78,46 @@ class OdometerOut(BaseModel):
     km: int
     recorded_on: date
     source: str
+
+
+# --- Plan de mantenimiento ---
+class PlanItemCreate(BaseModel):
+    name: str = Field(min_length=2, max_length=120)
+    interval_km: int | None = Field(default=None, ge=1)
+    interval_months: int | None = Field(default=None, ge=1)
+    last_service_km: int | None = Field(default=None, ge=0)
+    last_service_date: date | None = None
+    notes: str | None = Field(default=None, max_length=2000)
+
+    @model_validator(mode="after")
+    def _at_least_one_interval(self):
+        if self.interval_km is None and self.interval_months is None:
+            raise ValueError("Indica un intervalo por kilometraje o por meses")
+        return self
+
+
+class PlanItemUpdate(BaseModel):
+    name: str | None = Field(default=None, min_length=2, max_length=120)
+    interval_km: int | None = Field(default=None, ge=1)
+    interval_months: int | None = Field(default=None, ge=1)
+    last_service_km: int | None = Field(default=None, ge=0)
+    last_service_date: date | None = None
+    notes: str | None = Field(default=None, max_length=2000)
+
+
+class PlanItemOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    name: str
+    interval_km: int | None
+    interval_months: int | None
+    last_service_km: int | None
+    last_service_date: date | None
+    notes: str | None
+    due_km: int | None = None
+    km_remaining: int | None = None
+    due_date: date | None = None
+    days_remaining: int | None = None
+    percent: float = 0
+    status: str = "ok"

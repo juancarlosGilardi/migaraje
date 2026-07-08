@@ -1,6 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import Garage from './screens/Garage'
 import Login from './screens/Login'
+import VehicleDetail from './screens/VehicleDetail'
 import { hasSession } from './auth'
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
@@ -18,6 +19,14 @@ function App() {
           element={
             <RequireAuth>
               <Garage />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/vehicles/:id"
+          element={
+            <RequireAuth>
+              <VehicleDetail />
             </RequireAuth>
           }
         />

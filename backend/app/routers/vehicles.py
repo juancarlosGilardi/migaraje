@@ -6,8 +6,9 @@ from sqlalchemy.orm import Session
 
 from app.core.security import get_current_user
 from app.db import get_db
-from app.models import OdometerLog, User, Vehicle
+from app.models import OdometerLog, PlanItem, User, Vehicle
 from app.schemas import OdometerIn, OdometerOut, VehicleIn, VehicleOut, VehicleUpdate
+from app.seeds import find_template
 
 router = APIRouter(prefix="/api/vehicles", tags=["vehicles"])
 
@@ -28,7 +29,26 @@ def _current_km(vehicle_id: int, db: Session) -> int:
 def _to_out(vehicle: Vehicle, db: Session) -> VehicleOut:
     out = VehicleOut.model_validate(vehicle)
     out.current_km = _current_km(vehicle.id, db)
+    out.spec = vehicle.spec_json
     return out
+
+
+def _seed_plan_and_spec(vehicle: Vehicle, initial_km: int) -> None:
+    """Copia la plantilla de marca/modelo como ficha técnica y plan de mantenimiento inicial."""
+    template = find_template(vehicle.brand, vehicle.model)
+    vehicle.spec_json = template["spec"]
+    today = date.today()
+    for item in template["plan_items"]:
+        vehicle.plan_items.append(
+            PlanItem(
+                name=item["name"],
+                interval_km=item["interval_km"],
+                interval_months=item["interval_months"],
+                last_service_km=initial_km,
+                last_service_date=today,
+                notes=item["notes"],
+            )
+        )
 
 
 @router.get("", response_model=list[VehicleOut])
@@ -56,6 +76,7 @@ def create_vehicle(
     db.flush()
     if data.initial_km > 0:
         db.add(OdometerLog(vehicle_id=vehicle.id, km=data.initial_km, recorded_on=date.today()))
+    _seed_plan_and_spec(vehicle, data.initial_km)
     db.commit()
     db.refresh(vehicle)
     return _to_out(vehicle, db)
