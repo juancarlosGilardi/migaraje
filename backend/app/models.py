@@ -1,7 +1,18 @@
 from datetime import date, datetime
 from typing import Any
 
-from sqlalchemy import JSON, Date, DateTime, ForeignKey, LargeBinary, Numeric, String, Text, func
+from sqlalchemy import (
+    JSON,
+    Date,
+    DateTime,
+    ForeignKey,
+    LargeBinary,
+    Numeric,
+    String,
+    Text,
+    UniqueConstraint,
+    func,
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db import Base
@@ -109,3 +120,38 @@ class ServiceFile(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
     service_record: Mapped[ServiceRecord] = relationship(back_populates="files")
+
+
+class CatalogMake(Base):
+    """Marca de vehículo del catálogo propio (importado de NHTSA + agregados curados para Perú)."""
+
+    __tablename__ = "catalog_makes"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(80), unique=True, index=True)
+    # 'nhtsa' (importado del proxy NHTSA) | 'custom' (agregado a mano para el mercado peruano)
+    source: Mapped[str] = mapped_column(String(20), default="nhtsa")
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+
+    models: Mapped[list["CatalogModel"]] = relationship(
+        back_populates="make", cascade="all, delete-orphan"
+    )
+
+
+class CatalogModel(Base):
+    """Modelo de vehículo asociado a una marca del catálogo propio."""
+
+    __tablename__ = "catalog_models"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    make_id: Mapped[int] = mapped_column(ForeignKey("catalog_makes.id"), index=True)
+    name: Mapped[str] = mapped_column(String(80))
+    source: Mapped[str] = mapped_column(String(20), default="nhtsa")
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+
+    make: Mapped[CatalogMake] = relationship(back_populates="models")
+
+    __table_args__ = (
+        # Evita duplicar el mismo modelo dentro de una marca (permite idempotencia en el import).
+        UniqueConstraint("make_id", "name", name="uq_catalog_model_make_name"),
+    )

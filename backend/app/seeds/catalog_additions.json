@@ -1,0 +1,83 @@
+{
+  "_comment": "Marcas/modelos vendidos en Perú/Latinoamérica/Asia que NO existen en el catálogo NHTSA (mercado EE.UU.). Investigado a mano en julio 2026 comparando contra la data real ya importada de NHTSA. Se agregan con source='custom'.",
+  "makes": [
+    {
+      "name": "Toyota",
+      "models": [
+        "Hilux",
+        "Fortuner",
+        "Yaris Cross",
+        "Rush",
+        "SW4",
+        "Hiace",
+        "Land Cruiser Prado"
+      ]
+    },
+    {
+      "name": "Hyundai",
+      "models": [
+        "Creta",
+        "Creta Grand",
+        "Grand i10",
+        "HB20",
+        "i10",
+        "i20",
+        "Staria",
+        "H1",
+        "Porter"
+      ]
+    },
+    {
+      "name": "Kia",
+      "models": [
+        "Picanto",
+        "Sportage",
+        "Stonic",
+        "K3",
+        "Bongo"
+      ]
+    },
+    {
+      "name": "Nissan",
+      "models": [
+        "NP300",
+        "March",
+        "V-Drive",
+        "Kicks e-Power",
+        "Urvan"
+      ]
+    },
+    {
+      "name": "Chevrolet",
+      "models": [
+        "N300",
+        "N400",
+        "Groove",
+        "Sail",
+        "Joy",
+        "Tornado"
+      ]
+    },
+    {
+      "name": "Suzuki",
+      "models": [
+        "Ertiga",
+        "Baleno",
+        "S-Presso",
+        "Jimny",
+        "Super Carry",
+        "Fronx"
+      ]
+    },
+    {
+      "name": "Mitsubishi",
+      "models": [
+        "L200",
+        "Xpander",
+        "Xpander Cross",
+        "ASX",
+        "Montero Full"
+      ]
+    }
+  ]
+}
