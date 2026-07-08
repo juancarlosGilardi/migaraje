@@ -39,15 +39,20 @@ from app.models import CatalogMake, CatalogModel
 
 NHTSA_BASE = "https://vpic.nhtsa.dot.gov/api/vehicles"
 VEHICLE_TYPES = ("car", "truck", "multipurpose passenger vehicle (mpv)")
-# NHTSA aplica rate-limiting agresivo (403) si se dispara todo de golpe, incluso con
-# un semáforo bajo, porque asyncio.as_completed arranca las ~383 tareas casi a la vez
-# y solo el propio await del semáforo las frena "a la entrada", no espaciadas en el
-# tiempo. Por eso además del semáforo se agrega un pequeño delay entre arranques y
-# reintentos con backoff ante 403/429.
-CONCURRENCY = 5
-REQUEST_STAGGER_SECONDS = 0.25  # espera entre el lanzamiento de cada tarea
+# NHTSA está detrás de Akamai, que aplica rate-limiting/bloqueo por comportamiento
+# (403 con server: AkamaiGHost) si detecta ráfagas de peticiones sin cabeceras de
+# navegador. Se usa un User-Agent normal, concurrencia baja y stagger entre el
+# lanzamiento de cada tarea, más reintentos con backoff ante 403/429.
+CONCURRENCY = 3
+REQUEST_STAGGER_SECONDS = 0.6  # espera entre el lanzamiento de cada tarea
 MAX_RETRIES = 5
-RETRY_BASE_DELAY = 2.0
+RETRY_BASE_DELAY = 3.0
+HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+        "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+    )
+}
 ADDITIONS_PATH = Path(__file__).parent / "catalog_additions.json"
 
 # --- Mismo filtro/priorización que vehicle_catalog.py (mantenido en sync a mano;
@@ -92,7 +97,7 @@ async def _fetch_makes_for_type(client: httpx.AsyncClient, vehicle_type: str) ->
 
 async def fetch_all_makes() -> list[str]:
     """Devuelve las marcas filtradas (sin talleres/customs), en su forma de display."""
-    async with httpx.AsyncClient(timeout=15) as client:
+    async with httpx.AsyncClient(timeout=15, headers=HEADERS) as client:
         raw_names: set[str] = set()
         for vtype in VEHICLE_TYPES:
             try:
@@ -180,7 +185,7 @@ async def import_from_nhtsa() -> None:
             await asyncio.sleep(REQUEST_STAGGER_SECONDS)
         return tasks
 
-    async with httpx.AsyncClient(timeout=20) as client:
+    async with httpx.AsyncClient(timeout=20, headers=HEADERS) as client:
         tasks = await _staggered_launch(client)
         done = 0
         for coro in asyncio.as_completed(tasks):
