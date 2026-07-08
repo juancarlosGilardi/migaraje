@@ -1,10 +1,11 @@
 """Importa el catálogo de marcas/modelos de vehículos a la base de datos propia.
 
-Reutiliza la lógica de filtrado ya existente en app.services.nhtsa_client (marcas
-car+truck+mpv, sin nombres de talleres/customs) y para cada marca descarga sus
-modelos desde NHTSA vPIC (GetModelsForMake) con concurrencia moderada. Al final
-mezcla el archivo curado catalog_additions.json con modelos importantes para el
-mercado peruano que NHTSA no tiene (ej. Toyota Hilux).
+Reimplementa aquí (a propósito, para no acoplar el path de request normal a la red
+externa) el mismo filtro/priorización que originalmente vivía en
+app.services.vehicle_catalog: marcas car+truck+mpv, sin nombres de talleres/customs.
+Para cada marca descarga sus modelos desde NHTSA vPIC (GetModelsForMake) con
+concurrencia moderada. Al final mezcla el archivo curado catalog_additions.json con
+modelos importantes para el mercado peruano que NHTSA no tiene (ej. Toyota Hilux).
 
 Idempotente: puede volver a ejecutarse sin duplicar filas (verifica existencia
 antes de insertar / hace upsert por nombre).
