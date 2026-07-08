@@ -1,0 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+@import 'tailwindcss';
+
+/* Tokens del diseño MiGaraje (mismos del mockup) */
+@theme {
+  --color-bg: #070d1b;
+  --color-surface: #0e1628;
+  --color-card: #131d33;
+  --color-card2: #182544;
+  --color-line: rgba(148, 163, 184, 0.14);
+  --color-ink: #e8edf7;
+  --color-muted: #8fa0bc;
+  --color-cyan: #38bdf8;
+  --color-indigo: #818cf8;
+  --color-amber: #fbbf24;
+  --color-green: #34d399;
+  --color-red: #f87171;
+
+  --font-sans: 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Outfit', 'Inter', system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-bg);
+  background-image:
+    radial-gradient(900px 500px at 85% -5%, rgba(56, 189, 248, 0.1), transparent 60%),
+    radial-gradient(800px 500px at 0% 30%, rgba(129, 140, 248, 0.08), transparent 60%);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: rgba(56, 189, 248, 0.35);
+}
