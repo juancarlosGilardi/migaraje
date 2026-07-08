@@ -1,0 +1,1060 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MiGaraje — La bitácora inteligente de tu auto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============ BASE ============ */
+:root{
+  --bg:#070D1B;
+  --surface:#0E1628;
+  --card:#131D33;
+  --card2:#182544;
+  --line:rgba(148,163,184,.14);
+  --text:#E8EDF7;
+  --muted:#8FA0BC;
+  --cyan:#38BDF8;
+  --indigo:#818CF8;
+  --amber:#FBBF24;
+  --green:#34D399;
+  --red:#F87171;
+  --grad:linear-gradient(135deg,#38BDF8,#818CF8);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  background-image:
+    radial-gradient(900px 500px at 85% -5%, rgba(56,189,248,.10), transparent 60%),
+    radial-gradient(800px 500px at 0% 30%, rgba(129,140,248,.08), transparent 60%);
+  color:var(--text);
+  font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,.logo,.knum{font-family:Outfit,Inter,system-ui,sans-serif}
+::selection{background:rgba(56,189,248,.35)}
+.wrap{max-width:1140px;margin:0 auto;padding:0 24px}
+section{padding:72px 0}
+.kicker{
+  display:inline-block;font-size:12px;font-weight:700;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--cyan);margin-bottom:12px;
+}
+.sec-title{font-size:clamp(26px,3.4vw,38px);font-weight:700;letter-spacing:-.01em}
+.sec-sub{color:var(--muted);max-width:640px;margin-top:10px}
+
+/* ============ TOPBAR + HERO ============ */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:22px 0}
+.logo{font-size:22px;font-weight:800;letter-spacing:-.02em}
+.logo b{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.logo .dot{color:var(--cyan)}
+.stack{display:flex;gap:8px;flex-wrap:wrap}
+.pill{
+  font-size:12px;font-weight:600;color:var(--muted);
+  border:1px solid var(--line);border-radius:999px;padding:5px 12px;background:rgba(19,29,51,.5)
+}
+.hero{text-align:center;padding:56px 0 26px}
+.ribbon{
+  display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--amber);
+  border:1px solid rgba(251,191,36,.35);background:rgba(251,191,36,.08);
+  border-radius:999px;padding:6px 14px;margin-bottom:22px;
+}
+.hero h1{font-size:clamp(38px,5.6vw,64px);font-weight:800;line-height:1.08;letter-spacing:-.025em}
+.hero h1 span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:var(--muted);font-size:clamp(15px,1.6vw,18px);max-width:680px;margin:18px auto 0}
+.cta{display:flex;gap:12px;justify-content:center;margin-top:30px;flex-wrap:wrap}
+.btn{
+  display:inline-block;border-radius:12px;padding:13px 24px;font-weight:700;font-size:15px;
+  text-decoration:none;transition:transform .15s ease,box-shadow .15s ease;
+}
+.btn:hover{transform:translateY(-2px)}
+.btn-p{background:var(--grad);color:#04101F;box-shadow:0 8px 28px rgba(56,189,248,.30)}
+.btn-g{border:1px solid var(--line);color:var(--text);background:rgba(19,29,51,.5)}
+.hero-chips{display:flex;gap:10px;justify-content:center;margin-top:34px;flex-wrap:wrap}
+.hchip{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--text);
+  border:1px solid var(--line);border-radius:12px;padding:9px 14px;background:rgba(19,29,51,.6)}
+.hchip i{font-style:normal}
+
+/* ============ DEMO / TELÉFONO ============ */
+.demo{display:flex;flex-direction:column;align-items:center;position:relative}
+.glow{
+  position:absolute;top:130px;width:560px;height:560px;border-radius:50%;
+  background:radial-gradient(circle, rgba(56,189,248,.16), rgba(129,140,248,.08) 45%, transparent 70%);
+  filter:blur(10px);pointer-events:none;
+}
+.chips{display:flex;gap:8px;margin:26px 0 30px;flex-wrap:wrap;justify-content:center;position:relative;z-index:2}
+.chip{
+  cursor:pointer;border:1px solid var(--line);background:rgba(19,29,51,.7);color:var(--muted);
+  font-family:Inter;font-size:13px;font-weight:600;border-radius:999px;padding:8px 16px;
+  transition:all .15s ease;
+}
+.chip:hover{color:var(--text)}
+.chip.on{background:rgba(56,189,248,.14);border-color:rgba(56,189,248,.5);color:var(--cyan)}
+.phone{
+  width:392px;max-width:100%;height:820px;border-radius:54px;position:relative;z-index:2;
+  background:#04070E;border:1px solid rgba(148,163,184,.22);padding:11px;
+  box-shadow:0 40px 90px rgba(0,0,0,.55), inset 0 0 0 2px rgba(255,255,255,.03);
+}
+.screen-box{
+  height:100%;border-radius:44px;overflow:hidden;background:var(--surface);
+  display:flex;flex-direction:column;position:relative;
+}
+.island{
+  position:absolute;top:12px;left:50%;transform:translateX(-50%);
+  width:112px;height:30px;border-radius:20px;background:#04070E;z-index:30;
+}
+.sbar{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:16px 26px 0;font-size:13px;font-weight:600;color:var(--text);
+}
+.batt{width:24px;height:12px;border:1.5px solid var(--muted);border-radius:4px;position:relative}
+.batt::after{content:"";position:absolute;inset:2px;right:7px;background:var(--green);border-radius:1.5px}
+.screen{flex:1;overflow-y:auto;padding:18px 20px 20px;display:none;scrollbar-width:none}
+.screen::-webkit-scrollbar{display:none}
+.screen.active{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* pantalla: garaje */
+.hello{color:var(--muted);font-size:13px;margin-top:6px}
+.h-screen{font-family:Outfit;font-size:26px;font-weight:700;letter-spacing:-.02em;margin-top:2px}
+.strip{display:flex;gap:8px;margin:14px 0 16px;flex-wrap:wrap}
+.stat{font-size:11.5px;font-weight:600;border-radius:999px;padding:5px 11px;border:1px solid var(--line);color:var(--muted);background:rgba(19,29,51,.6)}
+.stat b{color:var(--text)}
+.car{
+  border:1px solid var(--line);border-radius:20px;padding:16px;margin-bottom:12px;cursor:pointer;
+  background:linear-gradient(140deg,var(--card2),var(--card) 60%);
+  background-image:radial-gradient(220px 120px at 100% 0%, rgba(56,189,248,.12), transparent 60%),linear-gradient(140deg,var(--card2),var(--card) 60%);
+  transition:border-color .15s ease;
+}
+.car:hover{border-color:rgba(56,189,248,.45)}
+.car-top{display:flex;align-items:center;gap:12px}
+.car-av{
+  width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-size:23px;
+  background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.25);
+}
+.car-name{font-weight:700;font-size:15.5px}
+.car-meta{color:var(--muted);font-size:12px;margin-top:1px}
+.plate{
+  font-size:10.5px;font-weight:700;letter-spacing:.08em;border:1px solid var(--line);
+  border-radius:6px;padding:2px 7px;color:var(--muted);background:rgba(7,13,27,.6)
+}
+.ring{width:52px;height:52px;border-radius:50%;margin-left:auto;display:grid;place-items:center;position:relative;flex-shrink:0}
+.ring::before{content:"";position:absolute;inset:0;border-radius:50%;background:conic-gradient(var(--c) calc(var(--p)*1%), rgba(148,163,184,.15) 0)}
+.ring::after{content:"";position:absolute;inset:5px;border-radius:50%;background:var(--card)}
+.ring b{position:relative;z-index:2;font-size:12px;font-weight:700;color:var(--c)}
+.alert{
+  display:flex;align-items:center;gap:8px;margin-top:13px;font-size:12.5px;font-weight:600;
+  border-radius:11px;padding:9px 12px;
+}
+.alert.warn{color:var(--amber);background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25)}
+.alert.ok{color:var(--green);background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.25)}
+.addcar{
+  border:1.5px dashed rgba(148,163,184,.3);border-radius:20px;padding:16px;text-align:center;
+  color:var(--muted);font-size:13.5px;font-weight:600;cursor:pointer;
+}
+.addcar:hover{color:var(--cyan);border-color:rgba(56,189,248,.5)}
+
+/* pantalla: mi auto */
+.back{color:var(--muted);font-size:12.5px;margin-top:6px}
+.kmbox{
+  border:1px solid var(--line);border-radius:20px;padding:18px;margin:14px 0;text-align:center;
+  background:linear-gradient(140deg,var(--card2),var(--card));
+}
+.kmbox .lbl{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.knum{font-size:40px;font-weight:800;letter-spacing:-.02em;margin:4px 0 2px}
+.knum small{font-size:16px;color:var(--muted);font-weight:600}
+.kmbtn{
+  display:inline-block;margin-top:10px;font-size:12.5px;font-weight:700;color:var(--cyan);cursor:pointer;
+  border:1px solid rgba(56,189,248,.4);border-radius:999px;padding:7px 16px;background:rgba(56,189,248,.08);
+}
+.subt{font-weight:700;font-size:14.5px;margin:18px 0 4px}
+.note{font-size:11.5px;color:var(--muted);margin-bottom:12px}
+.mitem{border:1px solid var(--line);border-radius:16px;padding:13px 14px;margin-bottom:10px;background:var(--card)}
+.mtop{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.mname{font-weight:650;font-size:13.5px}
+.mdue{font-size:11.5px;font-weight:700;white-space:nowrap}
+.mrule{font-size:11.5px;color:var(--muted);margin-top:1px}
+.bar{height:6px;border-radius:99px;background:rgba(148,163,184,.15);margin-top:9px;overflow:hidden}
+.bar span{display:block;height:100%;border-radius:99px}
+.spec{font-size:11px;color:var(--cyan);margin-top:8px;font-weight:600}
+.kmnote{font-size:10.5px;color:var(--muted);margin-top:10px;line-height:1.5}
+.fichips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:6px}
+.fich{font-size:11px;font-weight:600;color:var(--muted);border:1px solid var(--line);border-radius:9px;padding:5px 9px;background:rgba(7,13,27,.5)}
+
+/* simulación cámara / OCR de odómetro */
+.cam{display:none;border:1px solid var(--line);border-radius:20px;padding:14px;background:var(--card);margin:-4px 0 14px;animation:fade .3s ease}
+.cam-frame{position:relative;border-radius:14px;background:#0A0E18;border:1px solid rgba(148,163,184,.2);height:118px;display:grid;place-items:center;overflow:hidden}
+.odo{display:flex;align-items:baseline;gap:8px}
+.odo-lbl{font-size:10px;color:var(--muted);letter-spacing:.2em;font-weight:700}
+.odo-d{font-family:ui-monospace,Consolas,monospace;font-size:34px;font-weight:700;letter-spacing:.14em;color:#7DF9C2;text-shadow:0 0 14px rgba(52,211,153,.55)}
+.odo-u{font-size:11px;color:var(--muted);font-weight:700}
+.scanline{position:absolute;left:0;right:0;top:0;height:2px;background:var(--cyan);box-shadow:0 0 14px var(--cyan);opacity:0}
+.scanline.run{opacity:1;animation:sweep 1.5s ease-in-out}
+@keyframes sweep{0%{top:6%}50%{top:92%}100%{top:6%}}
+.cam-status{font-size:11.5px;color:var(--muted);text-align:center;margin-top:10px}
+.cam-result{display:none;margin-top:12px}
+.cam-btns{display:flex;gap:8px}
+.cam-btns .confirm{width:auto;flex:1.6;margin-top:0}
+.ghostbtn{flex:1;border:1px solid var(--line);background:none;color:var(--muted);border-radius:13px;font-family:Inter;font-weight:700;font-size:13px;cursor:pointer;padding:13px}
+
+/* pantalla: historial */
+.fchips{display:flex;gap:7px;margin:12px 0;flex-wrap:wrap}
+.fchip{font-size:11.5px;font-weight:600;border-radius:999px;padding:5px 12px;border:1px solid var(--line);color:var(--muted)}
+.fchip.on{background:rgba(56,189,248,.14);border-color:rgba(56,189,248,.5);color:var(--cyan)}
+.ysum{font-size:12.5px;color:var(--muted);margin-bottom:14px}
+.ysum b{color:var(--text)}
+.tl{position:relative;padding-left:18px}
+.tl::before{content:"";position:absolute;left:4px;top:6px;bottom:6px;width:2px;background:rgba(148,163,184,.18);border-radius:2px}
+.titem{position:relative;margin-bottom:14px}
+.titem::before{
+  content:"";position:absolute;left:-18px;top:6px;width:10px;height:10px;border-radius:50%;
+  background:var(--cyan);box-shadow:0 0 0 4px rgba(56,189,248,.15);
+}
+.tcard{border:1px solid var(--line);border-radius:16px;padding:12px 14px;background:var(--card)}
+.tdate{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.trow{display:flex;justify-content:space-between;gap:8px;align-items:baseline;margin-top:3px}
+.ttitle{font-weight:650;font-size:13.5px}
+.tcost{font-weight:800;font-size:13.5px;color:var(--text);white-space:nowrap}
+.tmeta{font-size:11.5px;color:var(--muted);margin-top:2px}
+.docs{display:flex;gap:6px;margin-top:9px}
+.doc{
+  display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;
+  border-radius:7px;padding:4px 8px;letter-spacing:.03em;
+}
+.doc.pdf{color:#FCA5A5;background:rgba(248,113,113,.10);border:1px solid rgba(248,113,113,.3)}
+.doc.xml{color:#6EE7B7;background:rgba(52,211,153,.10);border:1px solid rgba(52,211,153,.3)}
+
+/* pantalla: papeles */
+.dgroup{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:16px 0 8px}
+.dcard{border:1px solid var(--line);border-radius:16px;padding:13px 14px;margin-bottom:10px;background:var(--card)}
+.dcard.off{opacity:.55}
+.dtop{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.dname{font-weight:650;font-size:13.5px}
+.dmeta{font-size:11.5px;color:var(--muted);margin-top:1px}
+.dchip{font-size:11px;font-weight:800;border-radius:999px;padding:4px 10px;white-space:nowrap;flex-shrink:0}
+.dchip.ok{color:var(--green);background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.3)}
+.dchip.warn{color:var(--amber);background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.3)}
+.dchip.red{color:var(--red);background:rgba(248,113,113,.12);border:1px solid rgba(248,113,113,.35)}
+.dchip.na{color:var(--muted);background:rgba(148,163,184,.08);border:1px solid var(--line)}
+.dfoot{font-size:11.5px;color:var(--muted);margin-top:9px;border-top:1px dashed var(--line);padding-top:8px}
+
+/* pantalla: factura */
+.dz{
+  border:1.5px dashed rgba(56,189,248,.45);border-radius:20px;padding:34px 20px;text-align:center;
+  background:rgba(56,189,248,.05);cursor:pointer;margin-top:14px;transition:background .15s ease;
+}
+.dz:hover{background:rgba(56,189,248,.10)}
+.dz .ic{font-size:34px}
+.dz .t1{font-weight:700;font-size:14.5px;margin-top:10px}
+.dz .t2{font-size:12px;color:var(--muted);margin-top:5px;line-height:1.5}
+.scan{display:none;flex-direction:column;align-items:center;gap:14px;padding:44px 20px;text-align:center}
+.spinner{width:38px;height:38px;border-radius:50%;border:3px solid rgba(56,189,248,.2);border-top-color:var(--cyan);animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.scan .t1{font-weight:700;font-size:14px}
+.scan .t2{font-size:12px;color:var(--muted)}
+.parsed{display:none;margin-top:14px;animation:fade .3s ease}
+.okline{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:var(--green);margin-bottom:12px}
+.fx{border:1px solid var(--line);border-radius:18px;background:var(--card);overflow:hidden}
+.fx-h{display:flex;justify-content:space-between;align-items:center;padding:13px 15px;border-bottom:1px solid var(--line);background:rgba(52,211,153,.05)}
+.fx-h .n{font-weight:700;font-size:13.5px}
+.fx-h .s{font-size:11px;color:var(--muted)}
+.fx-total{font-family:Outfit;font-weight:800;font-size:17px;color:var(--green)}
+.fx-b{padding:12px 15px}
+.frow{display:flex;justify-content:space-between;font-size:12px;padding:4px 0}
+.frow .k{color:var(--muted)}
+.frow .v{font-weight:600}
+.fitems{border-top:1px dashed var(--line);margin-top:8px;padding-top:8px}
+.sugg{
+  margin-top:12px;border:1px solid rgba(56,189,248,.35);border-radius:16px;padding:13px 15px;
+  background:rgba(56,189,248,.07);
+}
+.sugg .k{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--cyan);font-weight:800}
+.sugg .v{font-size:13px;font-weight:650;margin-top:4px}
+.confirm{
+  width:100%;margin-top:12px;border:none;border-radius:13px;padding:13px;cursor:pointer;
+  font-family:Inter;font-weight:800;font-size:14px;background:var(--grad);color:#04101F;
+}
+.confirm.done{background:rgba(52,211,153,.15);color:var(--green);border:1px solid rgba(52,211,153,.4);cursor:default}
+.replay{display:block;text-align:center;font-size:11.5px;color:var(--muted);margin-top:12px;cursor:pointer;text-decoration:underline}
+
+/* tabbar + fab */
+.tabbar{
+  display:flex;border-top:1px solid var(--line);background:rgba(10,16,32,.92);
+  backdrop-filter:blur(10px);padding:8px 6px 14px;
+}
+.tab{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;
+  color:var(--muted);font-size:9.5px;font-weight:700;letter-spacing:.02em;border:none;background:none;font-family:Inter;
+  padding:6px 0;border-radius:12px;transition:color .15s ease;
+}
+.tab svg{width:21px;height:21px}
+.tab.on{color:var(--cyan)}
+.fab{
+  position:absolute;right:18px;bottom:86px;width:52px;height:52px;border-radius:18px;border:none;cursor:pointer;
+  background:var(--grad);color:#04101F;font-size:26px;font-weight:700;z-index:20;
+  box-shadow:0 10px 26px rgba(56,189,248,.4);display:grid;place-items:center;
+}
+
+/* ============ FEATURES ============ */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-top:34px}
+.fcard{
+  border:1px solid var(--line);border-radius:20px;padding:24px;background:rgba(19,29,51,.55);
+  transition:transform .15s ease,border-color .15s ease;
+}
+.fcard:hover{transform:translateY(-3px);border-color:rgba(56,189,248,.4)}
+.fic{
+  width:44px;height:44px;border-radius:13px;display:grid;place-items:center;font-size:21px;
+  background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.25);margin-bottom:14px;
+}
+.fcard h3{font-size:16.5px;font-weight:700;margin-bottom:6px}
+.fcard p{font-size:13.5px;color:var(--muted)}
+.tag-star{
+  display:inline-block;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--amber);border:1px solid rgba(251,191,36,.4);background:rgba(251,191,36,.08);
+  border-radius:6px;padding:2px 7px;margin-left:8px;vertical-align:2px;
+}
+
+/* ============ COMPARATIVA ============ */
+.cmp-box{overflow-x:auto;margin-top:34px;border:1px solid var(--line);border-radius:20px}
+table.cmp{width:100%;border-collapse:collapse;min-width:760px;font-size:13px}
+.cmp th,.cmp td{padding:13px 14px;text-align:center;border-bottom:1px solid var(--line)}
+.cmp tr:last-child td{border-bottom:none}
+.cmp thead th{font-size:12.5px;font-weight:700;background:rgba(14,22,40,.9);color:var(--muted)}
+.cmp th:first-child,.cmp td:first-child{text-align:left;font-weight:600;color:var(--text);min-width:220px}
+.cmp .mi{background:rgba(56,189,248,.09);color:var(--cyan);font-weight:800;position:relative}
+.cmp thead .mi{color:var(--cyan)}
+.cmp .yes{color:var(--green);font-weight:800}
+.cmp .part{color:var(--amber);font-weight:800}
+.cmp .no{color:rgba(148,163,184,.55);font-weight:700}
+.cmp small{display:block;font-weight:500;color:var(--muted);font-size:10.5px;margin-top:2px}
+.legend{display:flex;gap:18px;margin-top:14px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+.legend b.g{color:var(--green)} .legend b.a{color:var(--amber)} .legend b.n{color:rgba(148,163,184,.6)}
+.src-note{font-size:12px;color:var(--muted);margin-top:16px;max-width:820px}
+
+/* ============ ARQUITECTURA ============ */
+.arch{display:flex;gap:14px;align-items:stretch;margin-top:34px;flex-wrap:wrap}
+.acard{
+  flex:1;min-width:250px;border:1px solid var(--line);border-radius:20px;padding:22px;
+  background:rgba(19,29,51,.55);
+}
+.acard .an{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px;margin-bottom:4px}
+.acard .an i{font-style:normal;font-size:20px}
+.acard .as{font-size:12px;color:var(--cyan);font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.acard ul{margin:12px 0 0 0;list-style:none}
+.acard li{font-size:13px;color:var(--muted);padding:4px 0 4px 18px;position:relative}
+.acard li::before{content:"›";position:absolute;left:2px;color:var(--cyan);font-weight:800}
+.arrow{align-self:center;color:var(--cyan);font-size:24px;font-weight:800}
+.tech{display:flex;gap:8px;flex-wrap:wrap;margin-top:22px}
+.tk{
+  font-family:ui-monospace,Consolas,monospace;font-size:12px;color:var(--muted);
+  border:1px solid var(--line);border-radius:8px;padding:5px 11px;background:rgba(7,13,27,.6);
+}
+
+/* ============ ROADMAP + FOOTER ============ */
+.road{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:34px}
+.rcard{border:1px solid var(--line);border-radius:20px;padding:22px;background:rgba(19,29,51,.55)}
+.rcard .rt{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.rnum{
+  width:30px;height:30px;border-radius:9px;display:grid;place-items:center;
+  font-family:Outfit;font-weight:800;font-size:14px;background:var(--grad);color:#04101F;
+}
+.rcard h3{font-size:16px}
+.rcard .rw{font-size:11.5px;color:var(--amber);font-weight:700;margin-left:auto}
+.rcard ul{list-style:none}
+.rcard li{font-size:13px;color:var(--muted);padding:4px 0 4px 20px;position:relative}
+.rcard li::before{content:"✓";position:absolute;left:0;color:var(--cyan);font-weight:800;font-size:12px}
+footer{border-top:1px solid var(--line);padding:34px 0 44px;text-align:center;color:var(--muted);font-size:13px}
+footer b{color:var(--text)}
+@media (max-width:460px){
+  .phone{height:760px}
+  .arrow{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="logo">Mi<b>Garaje</b><span class="dot">.</span></div>
+    <div class="stack">
+      <span class="pill">⚛ React PWA</span>
+      <span class="pill">⚡ FastAPI</span>
+      <span class="pill">🐘 PostgreSQL</span>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="ribbon">🏆 Propuesta — Concurso de Innovación 2026</div>
+    <h1>La bitácora inteligente<br>de <span>tu auto</span></h1>
+    <p>Una PWA que registra el kilometraje de todos tus vehículos, planifica el mantenimiento
+    según la marca y el modelo, y guarda cada factura —PDF o XML— de la vida de tu auto.
+    Con lectura automática de comprobantes electrónicos SUNAT.</p>
+    <div class="cta">
+      <a class="btn btn-p" href="#demo">Ver demo interactivo ↓</a>
+      <a class="btn btn-g" href="#mercado">Análisis de mercado</a>
+    </div>
+    <div class="hero-chips">
+      <span class="hchip"><i>🚗</i> Garaje multi-auto</span>
+      <span class="hchip"><i>📋</i> Plan por marca y modelo</span>
+      <span class="hchip"><i>🧾</i> Facturas PDF + XML SUNAT</span>
+      <span class="hchip"><i>🪪</i> SOAT · revisión · impuesto · brevete</span>
+      <span class="hchip"><i>📱</i> Instalable y offline</span>
+    </div>
+  </div>
+
+  <!-- DEMO -->
+  <section id="demo">
+    <div style="text-align:center">
+      <span class="kicker">Demo interactivo</span>
+      <h2 class="sec-title">Así se siente MiGaraje</h2>
+      <p class="sec-sub" style="margin-left:auto;margin-right:auto">Navega con las pestañas del teléfono o con los botones.
+      En <b style="color:var(--text)">Mi auto</b>, toca “📷 Actualizar con foto” y mira cómo el OCR lee el odómetro y recalcula todo.
+      En <b style="color:var(--text)">Papeles</b> están el SOAT, la revisión técnica, el impuesto vehicular y tu brevete.
+      En <b style="color:var(--text)">Factura</b>, haz clic en la zona de carga para ver la lectura automática del XML.</p>
+    </div>
+
+    <div class="demo">
+      <div class="glow"></div>
+      <div class="chips">
+        <button class="chip on" data-go="garage">🏠 Garaje</button>
+        <button class="chip" data-go="car">🔧 Mi auto</button>
+        <button class="chip" data-go="docs">🪪 Papeles</button>
+        <button class="chip" data-go="history">🕓 Historial</button>
+        <button class="chip" data-go="upload">🧾 Factura</button>
+      </div>
+
+      <div class="phone">
+        <div class="screen-box">
+          <div class="island"></div>
+          <div class="sbar"><span>9:41</span><span class="batt"></span></div>
+
+          <!-- PANTALLA: GARAJE -->
+          <div class="screen active" data-s="garage">
+            <div class="hello">Hola, Juan Carlos 👋</div>
+            <div class="h-screen">Tu garaje</div>
+            <div class="strip">
+              <span class="stat"><b>2</b> autos</span>
+              <span class="stat"><b>3</b> alertas</span>
+              <span class="stat"><b id="gYear">S/ 2,730</b> en 2026</span>
+            </div>
+
+            <div class="alert warn" data-go="docs" style="margin:0 0 12px;cursor:pointer">🪪 Tu brevete vence en <b>&nbsp;18 días</b> · ver papeles ›</div>
+
+            <div class="car" data-go="car">
+              <div class="car-top">
+                <div class="car-av">🚙</div>
+                <div>
+                  <div class="car-name">Toyota RAV4 2022</div>
+                  <div class="car-meta"><span class="plate">BGR-742</span> &nbsp;·&nbsp; <span id="gKm">48,350 km</span></div>
+                </div>
+                <div class="ring" id="ring1" style="--p:87;--c:var(--amber)"><b id="ring1t">87%</b></div>
+              </div>
+              <div class="alert warn">⚠️ Cambio de aceite en <b id="gAlertKm">&nbsp;650 km</b></div>
+            </div>
+
+            <div class="car">
+              <div class="car-top">
+                <div class="car-av">🚗</div>
+                <div>
+                  <div class="car-name">Hyundai Tucson 2019</div>
+                  <div class="car-meta"><span class="plate">AKD-159</span> &nbsp;·&nbsp; 91,200 km</div>
+                </div>
+                <div class="ring" style="--p:24;--c:var(--green)"><b>24%</b></div>
+              </div>
+              <div class="alert ok">✓ Todo al día · próximo servicio en 3,800 km</div>
+            </div>
+
+            <div class="addcar">＋ Agregar auto</div>
+          </div>
+
+          <!-- PANTALLA: MI AUTO -->
+          <div class="screen" data-s="car">
+            <div class="back" data-go="garage" style="cursor:pointer">‹ Garaje</div>
+            <div class="h-screen">Toyota RAV4 2022</div>
+            <div class="car-meta" style="margin-top:2px"><span class="plate">BGR-742</span> &nbsp;·&nbsp; Gasolina 2.5 · AT</div>
+
+            <div class="kmbox">
+              <div class="lbl">Kilometraje actual</div>
+              <div class="knum" id="kmNum">48,350 <small>km</small></div>
+              <span class="kmbtn" id="kmBtn" onclick="openCam()">📷 Actualizar con foto</span>
+              <div class="kmnote">Registro mensual: un aviso el día 1 y un solo recordatorio después.<br>¿No pudiste? Silencio y volvemos a preguntar en 30 días. Sin spam.</div>
+            </div>
+
+            <!-- simulación: foto del odómetro → OCR -->
+            <div class="cam" id="cam">
+              <div class="cam-frame">
+                <div class="odo">
+                  <span class="odo-lbl">ODO</span>
+                  <span class="odo-d">048512</span>
+                  <span class="odo-u">km</span>
+                </div>
+                <div class="scanline" id="scanline"></div>
+              </div>
+              <div class="cam-status" id="camStatus">Leyendo el tablero… funciona con odómetros análogos y digitales</div>
+              <div class="cam-result" id="camResult">
+                <div class="okline" style="margin:0 0 10px">✓ Lectura: <b>&nbsp;48,512 km</b> · confianza 98%</div>
+                <div class="cam-btns">
+                  <button class="confirm" onclick="confirmKm()">Confirmar</button>
+                  <button class="ghostbtn" onclick="closeCam()">Corregir</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="subt">Ficha de tu auto</div>
+            <div class="fichips">
+              <span class="fich">🛢 Aceite: <b>5W-30 sintético</b> (4.8 L)</span>
+              <span class="fich">🛞 225/60 R18 · 33 psi</span>
+              <span class="fich">🔋 60 Ah</span>
+              <span class="fich">⛽ Gasolina 90+</span>
+            </div>
+
+            <div class="subt">Plan de mantenimiento</div>
+            <div class="note">Basado en el manual de fábrica Toyota RAV4 · totalmente editable</div>
+
+            <div class="mitem">
+              <div class="mtop"><span class="mname">Aceite y filtro de motor</span><span class="mdue" id="oilDue" style="color:var(--amber)">en 650 km</span></div>
+              <div class="mrule">Cada 5,000 km o 6 meses · último: 44,000 km</div>
+              <div class="bar"><span id="oilBar" style="width:87%;background:var(--amber)"></span></div>
+              <div class="spec">🛢 Usa el recomendado: 5W-30 sintético · API SP · 4.8 L con filtro</div>
+            </div>
+            <div class="mitem">
+              <div class="mtop"><span class="mname">Rotación de llantas</span><span class="mdue" id="rotDue" style="color:var(--text)">en 1,650 km</span></div>
+              <div class="mrule">Cada 10,000 km · último: 40,000 km</div>
+              <div class="bar"><span id="rotBar" style="width:84%;background:var(--cyan)"></span></div>
+            </div>
+            <div class="mitem">
+              <div class="mtop"><span class="mname">Filtro de aire</span><span class="mdue" id="airDue" style="color:var(--text)">en 11,650 km</span></div>
+              <div class="mrule">Cada 20,000 km · último: 40,000 km</div>
+              <div class="bar"><span id="airBar" style="width:42%;background:var(--cyan)"></span></div>
+            </div>
+            <div class="mitem">
+              <div class="mtop"><span class="mname">Líquido de frenos</span><span class="mdue" style="color:var(--text)">en 31,650 km</span></div>
+              <div class="mrule">Cada 40,000 km o 2 años · último: ene 2026</div>
+              <div class="bar"><span style="width:21%;background:var(--green)"></span></div>
+            </div>
+            <div class="mitem">
+              <div class="mtop"><span class="mname">Cadena de distribución</span><span class="mdue" style="color:var(--text)">en 51,650 km</span></div>
+              <div class="mrule">Revisión a los 100,000 km</div>
+              <div class="bar"><span style="width:48%;background:var(--green)"></span></div>
+            </div>
+          </div>
+
+          <!-- PANTALLA: HISTORIAL -->
+          <div class="screen" data-s="history">
+            <div class="h-screen" style="margin-top:8px">Historial</div>
+            <div class="fchips">
+              <span class="fchip">Toyota RAV4 ▾</span>
+              <span class="fchip on">2026</span>
+              <span class="fchip">2025</span>
+              <span class="fchip">Todo</span>
+            </div>
+            <div class="ysum">2026 · <b id="cYear">3 servicios</b> · <b id="sYear">S/ 2,730</b> · <span style="color:var(--cyan)">↧ exportar PDF</span></div>
+
+            <div class="tl" id="tl2026">
+              <div class="titem">
+                <div class="tcard">
+                  <div class="tdate">12 jun 2026 · 47,900 km</div>
+                  <div class="trow"><span class="ttitle">Alineamiento, balanceo y rotación</span><span class="tcost">S/ 260</span></div>
+                  <div class="tmeta">Autoservicio Delta · Surquillo</div>
+                  <div class="docs"><span class="doc pdf">⎙ PDF</span></div>
+                </div>
+              </div>
+              <div class="titem">
+                <div class="tcard">
+                  <div class="tdate">03 mar 2026 · 45,100 km</div>
+                  <div class="trow"><span class="ttitle">Pastillas de freno delanteras</span><span class="tcost">S/ 620</span></div>
+                  <div class="tmeta">Servicio Rodríguez · La Molina</div>
+                  <div class="docs"><span class="doc pdf">⎙ PDF</span><span class="doc xml">⟨/⟩ XML</span></div>
+                </div>
+              </div>
+              <div class="titem">
+                <div class="tcard">
+                  <div class="tdate">15 ene 2026 · 44,000 km</div>
+                  <div class="trow"><span class="ttitle">Mantenimiento de 44,000 km</span><span class="tcost">S/ 1,850</span></div>
+                  <div class="tmeta">Taller AutoPro S.A.C. · Surco · aceite, filtros, frenos</div>
+                  <div class="docs"><span class="doc pdf">⎙ PDF</span><span class="doc xml">⟨/⟩ XML</span></div>
+                </div>
+              </div>
+              <div class="titem">
+                <div class="tcard" style="opacity:.65">
+                  <div class="tdate">20 oct 2025 · 41,300 km</div>
+                  <div class="trow"><span class="ttitle">Batería nueva (60 Ah)</span><span class="tcost">S/ 780</span></div>
+                  <div class="tmeta">Autoservicio Delta · Surquillo</div>
+                  <div class="docs"><span class="doc xml">⟨/⟩ XML</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PANTALLA: PAPELES -->
+          <div class="screen" data-s="docs">
+            <div class="h-screen" style="margin-top:8px">Papeles y vencimientos</div>
+            <div class="note" style="margin-top:4px">Del auto y del conductor · alertas 30, 15 y 3 días antes</div>
+
+            <div class="dgroup">🪪 Conductor · Juan Carlos</div>
+            <div class="dcard">
+              <div class="dtop">
+                <div>
+                  <div class="dname">Licencia de conducir (A-I)</div>
+                  <div class="dmeta">Vigencia 10 años · desde los 70: 5, 3 o 2 años</div>
+                </div>
+                <span class="dchip red">¡18 días!</span>
+              </div>
+              <div class="dfoot">Vence 24 jul 2026 · agenda examen médico y cita MTC en línea</div>
+            </div>
+
+            <div class="dgroup">🚙 Toyota RAV4 · BGR-742</div>
+            <div class="dcard">
+              <div class="dtop">
+                <div>
+                  <div class="dname">SOAT</div>
+                  <div class="dmeta">Póliza 4501-9921 · registrado desde su XML</div>
+                </div>
+                <span class="dchip warn">40 días</span>
+              </div>
+              <div class="dfoot">Vence 15 ago 2026 · renueva en línea y sube el XML</div>
+            </div>
+            <div class="dcard">
+              <div class="dtop">
+                <div>
+                  <div class="dname">Revisión técnica (CITV)</div>
+                  <div class="dmeta">1.ª revisión: al 4.º año de fabricación (2022)</div>
+                </div>
+                <span class="dchip warn">este año</span>
+              </div>
+              <div class="dfoot">Programa antes de nov 2026 en un centro autorizado MTC · luego anual</div>
+            </div>
+            <div class="dcard">
+              <div class="dtop">
+                <div>
+                  <div class="dname">Impuesto vehicular (SAT Lima)</div>
+                  <div class="dmeta">Inscrita en 2023 · año 3 de 3 · 1% del valor</div>
+                </div>
+                <span class="dchip warn">56 días</span>
+              </div>
+              <div class="dfoot">Cuota 3/4 vence 31 ago 2026 · desde 2027 ya no aplica ✓</div>
+            </div>
+
+            <div class="dgroup">🚗 Hyundai Tucson · AKD-159</div>
+            <div class="dcard">
+              <div class="dtop">
+                <div>
+                  <div class="dname">SOAT</div>
+                  <div class="dmeta">Póliza 7802-1140</div>
+                </div>
+                <span class="dchip ok">237 días</span>
+              </div>
+              <div class="dfoot">Vence 28 feb 2027</div>
+            </div>
+            <div class="dcard">
+              <div class="dtop">
+                <div>
+                  <div class="dname">Revisión técnica (CITV)</div>
+                  <div class="dmeta">Anual desde el 4.º año</div>
+                </div>
+                <span class="dchip ok">96 días</span>
+              </div>
+              <div class="dfoot">Vigente hasta 10 oct 2026</div>
+            </div>
+            <div class="dcard off">
+              <div class="dtop">
+                <div>
+                  <div class="dname">Impuesto vehicular</div>
+                  <div class="dmeta">Afecto 2020–2022 · 3 años cumplidos</div>
+                </div>
+                <span class="dchip na">ya no aplica ✓</span>
+              </div>
+            </div>
+
+            <div class="addcar" style="margin-top:12px">＋ Agregar documento</div>
+          </div>
+
+          <!-- PANTALLA: FACTURA -->
+          <div class="screen" data-s="upload">
+            <div class="h-screen" style="margin-top:8px">Nueva factura</div>
+            <div class="note" style="margin-top:4px">Sube el comprobante de tu último servicio</div>
+
+            <div class="dz" id="dz" onclick="startScan()">
+              <div class="ic">🧾</div>
+              <div class="t1">Arrastra tu PDF o XML aquí</div>
+              <div class="t2">Sirve para mantenimientos, SOAT o revisión técnica.<br>Si es XML (SUNAT), MiGaraje lee y registra todo por ti.<br><b style="color:var(--cyan)">▶ Haz clic para simular</b></div>
+            </div>
+
+            <div class="scan" id="scan">
+              <div class="spinner"></div>
+              <div class="t1">Leyendo factura electrónica…</div>
+              <div class="t2">Formato UBL 2.1 · SUNAT · extrayendo emisor, fecha, ítems y total</div>
+            </div>
+
+            <div class="parsed" id="parsed">
+              <div class="okline">✓ Factura electrónica detectada (UBL 2.1 · SUNAT)</div>
+              <div class="fx">
+                <div class="fx-h">
+                  <div>
+                    <div class="n">Taller AutoPro S.A.C.</div>
+                    <div class="s">RUC 20481234567 · F001-00012345</div>
+                  </div>
+                  <div class="fx-total">S/ 420.00</div>
+                </div>
+                <div class="fx-b">
+                  <div class="frow"><span class="k">Fecha de emisión</span><span class="v">02 jul 2026</span></div>
+                  <div class="frow"><span class="k">Moneda</span><span class="v">PEN · inc. IGV</span></div>
+                  <div class="fitems">
+                    <div class="frow"><span class="k">Aceite sintético 5W-30 (4L)</span><span class="v">S/ 260.00</span></div>
+                    <div class="frow"><span class="k">Filtro de aceite original</span><span class="v">S/ 60.00</span></div>
+                    <div class="frow"><span class="k">Mano de obra</span><span class="v">S/ 100.00</span></div>
+                  </div>
+                </div>
+              </div>
+              <div class="sugg">
+                <div class="k">✦ Sugerencia automática</div>
+                <div class="v">Registrar como <b>“Cambio de aceite y filtro”</b> · Toyota RAV4 · 48,350 km</div>
+                <div class="spec" style="color:var(--green)">✓ El aceite de la factura coincide con el recomendado (5W-30 sintético)</div>
+              </div>
+              <button class="confirm" id="btnConfirm" onclick="confirmSave()">Confirmar y guardar en el historial</button>
+              <span class="replay" onclick="resetUpload()">↺ repetir demo</span>
+            </div>
+          </div>
+
+          <button class="fab" data-go="upload" title="Nueva factura">＋</button>
+
+          <!-- TABBAR -->
+          <div class="tabbar">
+            <button class="tab on" data-go="garage">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg>
+              GARAJE
+            </button>
+            <button class="tab" data-go="car">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4.5 4.5 0 0 1 5.8-.7l-3.1 3.1 1.9 1.9 3.1-3.1a4.5 4.5 0 0 1-6.2 5.8L8.4 21.1a2 2 0 0 1-2.8-2.8l7.8-7.8a4.5 4.5 0 0 1 1.3-4.2z"/></svg>
+              MI AUTO
+            </button>
+            <button class="tab" data-go="docs">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.6-3 8.6-7 10-4-1.4-7-5.4-7-10V6z"/><path d="M9.5 12l1.8 1.8L15 10"/></svg>
+              PAPELES
+            </button>
+            <button class="tab" data-go="history">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
+              HISTORIAL
+            </button>
+            <button class="tab" data-go="upload">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h14v18l-2.3-1.4L14.4 21l-2.4-1.4L9.6 21l-2.3-1.4L5 21z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg>
+              FACTURA
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="features">
+    <span class="kicker">Funcionalidades</span>
+    <h2 class="sec-title">Todo lo que tu auto necesita, en un solo lugar</h2>
+    <div class="grid">
+      <div class="fcard">
+        <div class="fic">🚗</div>
+        <h3>Garaje multi-auto</h3>
+        <p>Registra todos tus vehículos, cada uno con su placa, kilometraje, plan de mantenimiento e historial independiente.</p>
+      </div>
+      <div class="fcard">
+        <div class="fic">📋</div>
+        <h3>Plan según marca y modelo</h3>
+        <p>Plantillas basadas en el manual de fábrica (Toyota, Hyundai, Kia…) que se cargan al crear el auto y puedes ajustar a tu uso real. Incluyen el aceite recomendado (viscosidad, norma y capacidad) y la ficha técnica de tu modelo.</p>
+      </div>
+      <div class="fcard">
+        <div class="fic">🧾</div>
+        <h3>Facturas PDF y XML <span class="tag-star">Diferencial</span></h3>
+        <p>Adjunta los comprobantes de cada servicio. Si subes el XML de SUNAT (UBL 2.1), la app extrae sola el taller, la fecha, los ítems y el monto.</p>
+      </div>
+      <div class="fcard">
+        <div class="fic">🔔</div>
+        <h3>Recordatorios inteligentes</h3>
+        <p>Alertas por kilometraje o por tiempo, lo que ocurra primero. El registro mensual de km avisa una vez, recuerda una más y, si no respondes, espera 30 días antes de volver a intentar. Sin spam.</p>
+      </div>
+      <div class="fcard">
+        <div class="fic">📱</div>
+        <h3>PWA offline-first</h3>
+        <p>Se instala como app en Android, iOS y escritorio sin pasar por las tiendas. Consulta tu historial incluso sin señal en el taller.</p>
+      </div>
+      <div class="fcard">
+        <div class="fic">📈</div>
+        <h3>Valor de reventa</h3>
+        <p>Exporta el historial completo con facturas en un PDF ordenado: un auto con mantenimientos documentados se vende mejor y más rápido.</p>
+      </div>
+      <div class="fcard">
+        <div class="fic">🪪</div>
+        <h3>Papeles al día <span class="tag-star">Nuevo</span></h3>
+        <p>SOAT, revisión técnica, impuesto vehicular (SAT) y el brevete de cada conductor, con alertas 30, 15 y 3 días antes. Conoce las reglas peruanas: el impuesto solo se paga los 3 primeros años y la primera revisión técnica llega al 4.º año.</p>
+      </div>
+      <div class="fcard">
+        <div class="fic">📷</div>
+        <h3>Kilometraje por foto <span class="tag-star">Nuevo</span></h3>
+        <p>Tómale una foto al tablero y el OCR lee los kilómetros, sea un odómetro análogo de rodillos o una pantalla digital. Tú solo confirmas la lectura.</p>
+      </div>
+      <div class="fcard">
+        <div class="fic">🚨</div>
+        <h3>Radar del conductor <span class="tag-star">v2</span></h3>
+        <p>Papeletas por placa y récord del conductor (SAT/MTC), llamados a revisión de INDECOPI según tu marca y modelo, y control del kit GNV/GLP para autos a gas.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- MERCADO -->
+  <section id="mercado">
+    <span class="kicker">Análisis de mercado</span>
+    <h2 class="sec-title">Qué existe hoy y qué hueco cubrimos</h2>
+    <p class="sec-sub">Evaluamos las apps líderes de la categoría: Drivvo, Fuelio, Simply Auto, CARFAX Car Care, AUTOsist y el proyecto open source LubeLogger. Todas registran gastos; ninguna entiende la factura electrónica peruana, ninguna vigila el SOAT, la revisión técnica, el impuesto vehicular ni el brevete con reglas locales, y ninguna combina plan de fábrica + PWA en español.</p>
+
+    <div class="cmp-box">
+      <table class="cmp">
+        <thead>
+          <tr>
+            <th>Función</th>
+            <th class="mi">MiGaraje</th>
+            <th>Drivvo</th>
+            <th>Fuelio</th>
+            <th>Simply Auto</th>
+            <th>CARFAX<br>Car Care</th>
+            <th>LubeLogger</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Varios vehículos</td>
+            <td class="mi yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓<small>máx. 8</small></td><td class="yes">✓</td>
+          </tr>
+          <tr>
+            <td>Plan de mantenimiento por marca/modelo</td>
+            <td class="mi yes">✓<small>plantillas editables</small></td><td class="no">✗<small>intervalos manuales</small></td><td class="no">✗</td><td class="no">✗</td><td class="yes">✓<small>solo EE.UU.</small></td><td class="part">◐<small>manual</small></td>
+          </tr>
+          <tr>
+            <td>Adjuntar facturas (PDF)</td>
+            <td class="mi yes">✓</td><td class="part">◐<small>fotos / premium</small></td><td class="part">◐<small>fotos</small></td><td class="part">◐<small>premium</small></td><td class="no">✗</td><td class="yes">✓</td>
+          </tr>
+          <tr>
+            <td>Lee facturas XML (SUNAT · UBL 2.1)</td>
+            <td class="mi yes">✓<small>único en la categoría</small></td><td class="no">✗</td><td class="no">✗</td><td class="no">✗</td><td class="no">✗</td><td class="no">✗</td>
+          </tr>
+          <tr>
+            <td>SOAT, revisión técnica, impuesto vehicular y brevete</td>
+            <td class="mi yes">✓<small>reglas peruanas nativas</small></td><td class="part">◐<small>recordatorio manual</small></td><td class="part">◐<small>manual</small></td><td class="part">◐<small>manual</small></td><td class="no">✗</td><td class="part">◐<small>manual</small></td>
+          </tr>
+          <tr>
+            <td>Kilometraje por foto (OCR de odómetro)</td>
+            <td class="mi yes">✓<small>análogo y digital</small></td><td class="no">✗</td><td class="no">✗</td><td class="part">◐<small>viajes por GPS</small></td><td class="no">✗</td><td class="no">✗</td>
+          </tr>
+          <tr>
+            <td>PWA instalable + offline</td>
+            <td class="mi yes">✓</td><td class="no">✗<small>app nativa</small></td><td class="no">✗<small>app nativa</small></td><td class="no">✗<small>app nativa</small></td><td class="no">✗<small>app nativa</small></td><td class="part">◐<small>web self-host</small></td>
+          </tr>
+          <tr>
+            <td>Español completo</td>
+            <td class="mi yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="part">◐</td><td class="no">✗</td><td class="part">◐</td>
+          </tr>
+          <tr>
+            <td>Sin anuncios / código propio</td>
+            <td class="mi yes">✓</td><td class="no">✗<small>ads + premium</small></td><td class="part">◐</td><td class="no">✗<small>premium</small></td><td class="yes">✓</td><td class="yes">✓<small>MIT</small></td>
+          </tr>
+          <tr>
+            <td>Informe de historial para reventa</td>
+            <td class="mi yes">✓<small>PDF con facturas</small></td><td class="part">◐<small>reportes</small></td><td class="part">◐<small>CSV</small></td><td class="part">◐<small>CSV</small></td><td class="yes">✓<small>EE.UU.</small></td><td class="part">◐<small>export</small></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="legend">
+      <span><b class="g">✓</b> incluido</span>
+      <span><b class="a">◐</b> parcial o de pago</span>
+      <span><b class="n">✗</b> no disponible</span>
+    </div>
+    <p class="src-note">Nota: CARFAX autocompleta el historial con su red de talleres, pero solo en EE.UU./Canadá. Para los planes de fábrica existen APIs comerciales (CarMD, Vehicle Databases, Edmunds) centradas en el mercado norteamericano; por eso MiGaraje arranca con plantillas por marca/modelo curadas y editables, y deja la integración con API como evolución futura.
+    Los vencimientos legales siguen la norma peruana: el impuesto vehicular se paga solo los 3 primeros años contados desde el año siguiente a la primera inscripción (al contado en febrero o en 4 cuotas: feb · may · ago · nov), la revisión técnica de particulares es anual a partir del 4.º año de fabricación, y el brevete A-I dura 10 años, con plazos de 5, 3 y 2 años a partir de los 70.</p>
+  </section>
+
+  <!-- ARQUITECTURA -->
+  <section id="arquitectura">
+    <span class="kicker">Propuesta técnica</span>
+    <h2 class="sec-title">Arquitectura: React PWA + FastAPI</h2>
+    <div class="arch">
+      <div class="acard">
+        <div class="as">Frontend</div>
+        <div class="an"><i>⚛</i> React 18 · PWA</div>
+        <ul>
+          <li>Vite + TypeScript + Tailwind</li>
+          <li>Workbox: service worker y caché offline</li>
+          <li>IndexedDB para consulta sin conexión</li>
+          <li>Web Push para recordatorios</li>
+          <li>Cámara del teléfono (getUserMedia)</li>
+          <li>Instalable en Android, iOS y escritorio</li>
+        </ul>
+      </div>
+      <div class="arrow">⇄</div>
+      <div class="acard">
+        <div class="as">Backend</div>
+        <div class="an"><i>⚡</i> FastAPI · Python 3.12</div>
+        <ul>
+          <li>API REST con OpenAPI autogenerado</li>
+          <li>SQLAlchemy 2 + Alembic (migraciones)</li>
+          <li>Parser UBL 2.1 (lxml) para XML SUNAT</li>
+          <li>OCR de odómetro por foto (análogo y digital)</li>
+          <li>Auth JWT + refresh tokens</li>
+          <li>Motor de reglas de recordatorios (km/fecha)</li>
+        </ul>
+      </div>
+      <div class="arrow">⇄</div>
+      <div class="acard">
+        <div class="as">Datos y archivos</div>
+        <div class="an"><i>🗄</i> PostgreSQL + Storage</div>
+        <ul>
+          <li>PostgreSQL 16 (datos relacionales)</li>
+          <li>Storage S3-compatible para PDF/XML</li>
+          <li>Plantillas de planes por marca/modelo</li>
+          <li>Backups automáticos</li>
+          <li>Docker Compose para todo el stack</li>
+        </ul>
+      </div>
+    </div>
+    <div class="tech">
+      <span class="tk">users</span><span class="tk">vehicles</span><span class="tk">odometer_logs</span>
+      <span class="tk">maintenance_plans</span><span class="tk">plan_items</span><span class="tk">service_records</span>
+      <span class="tk">invoices</span><span class="tk">invoice_files (pdf/xml)</span><span class="tk">reminders</span>
+      <span class="tk">drivers</span><span class="tk">legal_documents</span><span class="tk">odometer_photos</span>
+    </div>
+  </section>
+
+  <!-- ROADMAP -->
+  <section id="roadmap">
+    <span class="kicker">Plan de ejecución</span>
+    <h2 class="sec-title">Roadmap</h2>
+    <div class="road">
+      <div class="rcard">
+        <div class="rt"><span class="rnum">1</span><h3>MVP</h3><span class="rw">semanas 1–4</span></div>
+        <ul>
+          <li>Registro / login (JWT)</li>
+          <li>Garaje: CRUD de vehículos y kilometraje</li>
+          <li>Plantillas de mantenimiento por marca/modelo</li>
+          <li>Historial de servicios con carga de PDF/XML</li>
+          <li>Vencimientos con alertas: SOAT, revisión, impuesto, brevete</li>
+          <li>Registro mensual de km: 1 aviso + 1 recordatorio, pausa de 30 días</li>
+          <li>PWA instalable con caché offline</li>
+        </ul>
+      </div>
+      <div class="rcard">
+        <div class="rt"><span class="rnum">2</span><h3>v1.1</h3><span class="rw">semanas 5–8</span></div>
+        <ul>
+          <li>Parser XML SUNAT (UBL 2.1) con autorregistro</li>
+          <li>SOAT y revisión técnica registrados desde su XML/boleta</li>
+          <li>Kilometraje por foto: OCR de odómetro análogo y digital</li>
+          <li>Notificaciones Web Push por km o fecha</li>
+          <li>Dashboard de gastos por auto y por año</li>
+          <li>Exportar historial a PDF (reventa)</li>
+        </ul>
+      </div>
+      <div class="rcard">
+        <div class="rt"><span class="rnum">3</span><h3>v2.0</h3><span class="rw">futuro</span></div>
+        <ul>
+          <li>OCR de facturas en PDF escaneado</li>
+          <li>Papeletas por placa y récord del conductor (SAT/MTC)</li>
+          <li>Recalls INDECOPI según tu marca y modelo</li>
+          <li>Revisión anual del kit GNV/GLP</li>
+          <li>API de planes de fábrica · modo taller</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <b>MiGaraje</b> · mockup de propuesta · React + FastAPI + PostgreSQL · Hecho con ❤️ en Lima, 2026
+  </footer>
+</div>
+
+<script>
+// Navegación entre pantallas (chips externos, tabbar, tarjetas y FAB)
+function go(s){
+  document.querySelectorAll('.screen').forEach(el=>el.classList.toggle('active', el.dataset.s===s));
+  document.querySelectorAll('.chip[data-go],.tab[data-go]').forEach(el=>el.classList.toggle('on', el.dataset.go===s));
+}
+document.querySelectorAll('[data-go]').forEach(el=>{
+  el.addEventListener('click',e=>{e.stopPropagation();go(el.dataset.go);});
+});
+
+// Simulación de lectura de factura XML SUNAT
+let saved=false;
+function startScan(){
+  const dz=document.getElementById('dz'), scan=document.getElementById('scan'), parsed=document.getElementById('parsed');
+  if(parsed.style.display==='block') return;
+  dz.style.display='none';
+  scan.style.display='flex';
+  setTimeout(()=>{ scan.style.display='none'; parsed.style.display='block'; },1700);
+}
+function confirmSave(){
+  const btn=document.getElementById('btnConfirm');
+  if(saved){ return; }
+  saved=true;
+  btn.classList.add('done');
+  btn.textContent='✓ Guardado en el historial';
+  // Inserta el servicio al inicio del timeline y actualiza los totales
+  const item=document.createElement('div');
+  item.className='titem';
+  item.innerHTML=`<div class="tcard" style="border-color:rgba(52,211,153,.45)">
+      <div class="tdate">02 jul 2026 · 48,350 km · <span style="color:var(--green)">nuevo</span></div>
+      <div class="trow"><span class="ttitle">Cambio de aceite y filtro</span><span class="tcost">S/ 420</span></div>
+      <div class="tmeta">Taller AutoPro S.A.C. · registrado desde XML SUNAT</div>
+      <div class="docs"><span class="doc xml">⟨/⟩ XML</span></div>
+    </div>`;
+  document.getElementById('tl2026').prepend(item);
+  document.getElementById('cYear').textContent='4 servicios';
+  document.getElementById('sYear').textContent='S/ 3,150';
+  document.getElementById('gYear').textContent='S/ 3,150';
+}
+function resetUpload(){
+  document.getElementById('parsed').style.display='none';
+  document.getElementById('dz').style.display='block';
+  if(!saved){
+    const btn=document.getElementById('btnConfirm');
+    btn.classList.remove('done');
+    btn.textContent='Confirmar y guardar en el historial';
+  }
+}
+
+// Simulación: foto del odómetro → OCR → recálculo del plan
+let kmUpdated=false;
+function openCam(){
+  if(kmUpdated) return;
+  const cam=document.getElementById('cam');
+  cam.style.display='block';
+  document.getElementById('camResult').style.display='none';
+  document.getElementById('camStatus').style.display='block';
+  const sl=document.getElementById('scanline');
+  sl.classList.remove('run'); void sl.offsetWidth; sl.classList.add('run');
+  setTimeout(()=>{
+    document.getElementById('camStatus').style.display='none';
+    document.getElementById('camResult').style.display='block';
+  },1600);
+}
+function closeCam(){ document.getElementById('cam').style.display='none'; }
+function confirmKm(){
+  kmUpdated=true;
+  closeCam();
+  document.getElementById('kmNum').innerHTML='48,512 <small>km</small>';
+  document.getElementById('kmBtn').textContent='✓ Actualizado hoy con foto';
+  document.getElementById('gKm').textContent='48,512 km';
+  document.getElementById('gAlertKm').innerHTML='&nbsp;488 km';
+  document.getElementById('oilDue').textContent='en 488 km';
+  document.getElementById('oilBar').style.width='90%';
+  document.getElementById('rotDue').textContent='en 1,488 km';
+  document.getElementById('rotBar').style.width='85%';
+  document.getElementById('airDue').textContent='en 11,488 km';
+  document.getElementById('airBar').style.width='43%';
+  document.getElementById('ring1').style.setProperty('--p',90);
+  document.getElementById('ring1t').textContent='90%';
+}
+</script>
+</body>
+</html>
