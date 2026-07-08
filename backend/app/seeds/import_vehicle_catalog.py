@@ -39,7 +39,15 @@ from app.models import CatalogMake, CatalogModel
 
 NHTSA_BASE = "https://vpic.nhtsa.dot.gov/api/vehicles"
 VEHICLE_TYPES = ("car", "truck", "multipurpose passenger vehicle (mpv)")
-CONCURRENCY = 6
+# NHTSA aplica rate-limiting agresivo (403) si se dispara todo de golpe, incluso con
+# un semáforo bajo, porque asyncio.as_completed arranca las ~383 tareas casi a la vez
+# y solo el propio await del semáforo las frena "a la entrada", no espaciadas en el
+# tiempo. Por eso además del semáforo se agrega un pequeño delay entre arranques y
+# reintentos con backoff ante 403/429.
+CONCURRENCY = 5
+REQUEST_STAGGER_SECONDS = 0.25  # espera entre el lanzamiento de cada tarea
+MAX_RETRIES = 5
+RETRY_BASE_DELAY = 2.0
 ADDITIONS_PATH = Path(__file__).parent / "catalog_additions.json"
 
 # --- Mismo filtro/priorización que vehicle_catalog.py (mantenido en sync a mano;
@@ -106,16 +114,29 @@ async def _fetch_models_for_make(
     client: httpx.AsyncClient, sem: asyncio.Semaphore, make: str
 ) -> tuple[str, list[str]]:
     async with sem:
-        try:
-            res = await client.get(
-                f"{NHTSA_BASE}/getmodelsformake/{make}", params={"format": "json"}
-            )
-            res.raise_for_status()
-            names = sorted({r["Model_Name"].strip() for r in res.json()["Results"] if r["Model_Name"]})
-            return make, names
-        except httpx.HTTPError as exc:
-            print(f"  [WARN] modelos de {make!r} fallaron: {exc}")
-            return make, []
+        last_exc: Exception | None = None
+        for attempt in range(1, MAX_RETRIES + 1):
+            try:
+                res = await client.get(
+                    f"{NHTSA_BASE}/getmodelsformake/{make}", params={"format": "json"}
+                )
+                if res.status_code in (403, 429) and attempt < MAX_RETRIES:
+                    delay = RETRY_BASE_DELAY * (2 ** (attempt - 1))
+                    await asyncio.sleep(delay)
+                    continue
+                res.raise_for_status()
+                names = sorted(
+                    {r["Model_Name"].strip() for r in res.json()["Results"] if r["Model_Name"]}
+                )
+                return make, names
+            except httpx.HTTPError as exc:
+                last_exc = exc
+                if attempt < MAX_RETRIES:
+                    delay = RETRY_BASE_DELAY * (2 ** (attempt - 1))
+                    await asyncio.sleep(delay)
+                    continue
+        print(f"  [WARN] modelos de {make!r} fallaron tras {MAX_RETRIES} intentos: {last_exc}")
+        return make, []
 
 
 def _get_or_create_make(db, name: str, source: str) -> CatalogMake:
@@ -152,8 +173,15 @@ async def import_from_nhtsa() -> None:
     start = time.time()
     results: dict[str, list[str]] = {}
 
-    async with httpx.AsyncClient(timeout=15) as client:
-        tasks = [_fetch_models_for_make(client, sem, make) for make in makes]
+    async def _staggered_launch(client: httpx.AsyncClient) -> list[asyncio.Task]:
+        tasks = []
+        for make in makes:
+            tasks.append(asyncio.create_task(_fetch_models_for_make(client, sem, make)))
+            await asyncio.sleep(REQUEST_STAGGER_SECONDS)
+        return tasks
+
+    async with httpx.AsyncClient(timeout=20) as client:
+        tasks = await _staggered_launch(client)
         done = 0
         for coro in asyncio.as_completed(tasks):
             make, models = await coro
