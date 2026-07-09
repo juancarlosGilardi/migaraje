@@ -10,6 +10,11 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
+      injectRegister: false, // registro manual en main.tsx para forzar recarga cuando hay versión nueva
+      workbox: {
+        clientsClaim: true,
+        skipWaiting: true,
+      },
       manifest: {
         name: 'MiGaraje — La bitácora inteligente de tu auto',
         short_name: 'MiGaraje',
