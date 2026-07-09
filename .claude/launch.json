@@ -8,6 +8,12 @@
       "port": 5173
     },
     {
+      "name": "frontend-preview",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "frontend", "run", "preview", "--", "--port", "4173"],
+      "port": 4173
+    },
+    {
       "name": "backend",
       "runtimeExecutable": "cmd",
       "runtimeArgs": ["/c", "cd backend && .venv\\Scripts\\python.exe -m uvicorn app.main:app --reload --port 8000"],

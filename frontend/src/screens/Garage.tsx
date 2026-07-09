@@ -5,6 +5,8 @@ import { api, ApiError } from '../api/client'
 import type { Vehicle } from '../api/types'
 import { clearSession, sessionUser } from '../auth'
 import Combobox from '../components/Combobox'
+import AlertsBanner from '../components/AlertsBanner'
+import OfflineBanner from '../components/OfflineBanner'
 
 const inputCls =
   'w-full rounded-xl border border-line bg-surface px-3 py-2.5 text-sm text-ink placeholder:text-muted focus:border-cyan focus:outline-none'
@@ -275,7 +277,12 @@ export default function Garage() {
         </div>
       </header>
 
-      <div className="mt-5 flex flex-col gap-3">
+      <div className="mt-5">
+        <OfflineBanner />
+        <AlertsBanner />
+      </div>
+
+      <div className="flex flex-col gap-3">
         {vehicles.isPending && <p className="text-sm text-muted">Cargando tu garaje…</p>}
         {vehicles.isError && (
           <p className="text-sm font-semibold text-red">No se pudo cargar el garaje. ¿API activa?</p>

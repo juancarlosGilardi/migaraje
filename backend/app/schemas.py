@@ -253,3 +253,14 @@ class VehicleDocumentsOut(BaseModel):
     soat: LegalDocumentOut
     citv: LegalDocumentOut
     impuesto_vehicular: ImpuestoVehicularOut
+
+
+# --- Alertas consolidadas (Garaje) ---
+class AlertOut(BaseModel):
+    kind: str  # 'plan' | 'document' | 'driver' | 'odometer'
+    status: str  # 'warn' | 'critical' | 'overdue' | 'notice' | 'reminder'
+    title: str
+    message: str
+    vehicle_id: int | None = None
+    driver_id: int | None = None
+    days_remaining: int | None = None

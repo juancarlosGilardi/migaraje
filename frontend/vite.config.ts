@@ -14,6 +14,22 @@ export default defineConfig({
       workbox: {
         clientsClaim: true,
         skipWaiting: true,
+        // Cachea las respuestas GET de la API para poder ver tu garaje,
+        // plan, historial y papeles sin señal (los datos pueden quedar
+        // desactualizados, pero no queda una pantalla en blanco).
+        runtimeCaching: [
+          {
+            urlPattern: ({ url, request }) =>
+              request.method === 'GET' && url.pathname.startsWith('/api/'),
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'api-cache',
+              networkTimeoutSeconds: 4,
+              expiration: { maxEntries: 200, maxAgeSeconds: 60 * 60 * 24 * 7 },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+        ],
       },
       manifest: {
         name: 'MiGaraje — La bitácora inteligente de tu auto',

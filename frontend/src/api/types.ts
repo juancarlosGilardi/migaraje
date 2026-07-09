@@ -139,3 +139,16 @@ export type VehicleDocuments = {
   citv: LegalDocument
   impuesto_vehicular: ImpuestoVehicular
 }
+
+// --- Alertas consolidadas ---
+export type AlertStatus = 'warn' | 'critical' | 'overdue' | 'notice' | 'reminder'
+
+export type Alert = {
+  kind: 'plan' | 'document' | 'driver' | 'odometer'
+  status: AlertStatus
+  title: string
+  message: string
+  vehicle_id: number | null
+  driver_id: number | null
+  days_remaining: number | null
+}
