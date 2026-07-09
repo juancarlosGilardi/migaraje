@@ -152,3 +152,13 @@ export type Alert = {
   driver_id: number | null
   days_remaining: number | null
 }
+
+// --- Catálogo de componentes mantenibles ---
+export type MaintenanceComponentCatalog = {
+  id: number
+  name: string
+  category: string
+  default_interval_km: number | null
+  default_interval_months: number | null
+  notes: string | null
+}

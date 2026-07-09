@@ -2,7 +2,8 @@ import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api, ApiError } from '../api/client'
-import type { PlanItem, Vehicle } from '../api/types'
+import type { MaintenanceComponentCatalog, PlanItem, Vehicle } from '../api/types'
+import Combobox from '../components/Combobox'
 
 const inputCls =
   'w-full rounded-xl border border-line bg-surface px-3 py-2.5 text-sm text-ink placeholder:text-muted focus:border-cyan focus:outline-none'
@@ -131,6 +132,104 @@ function PlanItemCard({ vehicleId, item }: { vehicleId: number; item: PlanItem }
   )
 }
 
+function AddPlanItemForm({ vehicleId, onDone }: { vehicleId: number; onDone: () => void }) {
+  const queryClient = useQueryClient()
+  const [name, setName] = useState('')
+  const [intervalKm, setIntervalKm] = useState('')
+  const [intervalMonths, setIntervalMonths] = useState('')
+  const [notes, setNotes] = useState('')
+
+  const components = useQuery({
+    queryKey: ['catalog', 'components'],
+    queryFn: () => api<MaintenanceComponentCatalog[]>('/api/catalog/components'),
+    staleTime: 24 * 60 * 60 * 1000,
+    retry: 1,
+  })
+
+  function pickComponent(componentName: string) {
+    setName(componentName)
+    const match = components.data?.find((c) => c.name === componentName)
+    if (match) {
+      setIntervalKm(match.default_interval_km ? String(match.default_interval_km) : '')
+      setIntervalMonths(match.default_interval_months ? String(match.default_interval_months) : '')
+      setNotes(match.notes ?? '')
+    }
+  }
+
+  const create = useMutation({
+    mutationFn: () =>
+      api(`/api/vehicles/${vehicleId}/plan`, {
+        method: 'POST',
+        body: JSON.stringify({
+          name,
+          interval_km: intervalKm ? Number(intervalKm) : null,
+          interval_months: intervalMonths ? Number(intervalMonths) : null,
+          notes: notes || null,
+        }),
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['plan', vehicleId] })
+      onDone()
+    },
+  })
+  const error = create.error as ApiError | null
+
+  const componentOptions = (components.data ?? []).map((c) => c.name)
+
+  return (
+    <form
+      className="mb-2.5 flex flex-col gap-2 rounded-2xl border border-line bg-card p-3.5"
+      onSubmit={(e) => {
+        e.preventDefault()
+        create.mutate()
+      }}
+    >
+      <p className="text-xs font-bold">Agregar componente al plan</p>
+      <Combobox
+        value={name}
+        onChange={pickComponent}
+        options={componentOptions}
+        loading={components.isPending}
+        placeholder="Busca un componente (pastillas de freno, bujías…)"
+        required
+        emptyHint="Sin coincidencias · se usará el texto escrito"
+      />
+      <div className="grid grid-cols-2 gap-2">
+        <input
+          className={`${inputCls}`}
+          type="number"
+          placeholder="Cada km"
+          value={intervalKm}
+          onChange={(e) => setIntervalKm(e.target.value)}
+          min={1}
+        />
+        <input
+          className={`${inputCls}`}
+          type="number"
+          placeholder="Cada meses"
+          value={intervalMonths}
+          onChange={(e) => setIntervalMonths(e.target.value)}
+          min={1}
+        />
+      </div>
+      {notes && <p className="text-[11px] text-cyan">🛈 {notes}</p>}
+      {error && <p className="text-xs font-semibold text-red">{error.message}</p>}
+      <div className="flex gap-2">
+        <button
+          type="submit"
+          disabled={create.isPending || (!intervalKm && !intervalMonths)}
+          className="flex-1 rounded-xl bg-gradient-to-r from-cyan to-indigo px-4 py-2 text-sm font-bold text-[#04101F] disabled:opacity-60"
+        >
+          Agregar al plan
+        </button>
+        <button type="button" onClick={onDone} className="rounded-xl border border-line px-4 py-2 text-sm font-semibold text-muted">
+          Cancelar
+        </button>
+      </div>
+    </form>
+  )
+}
+
 export default function VehicleDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
@@ -138,6 +237,7 @@ export default function VehicleDetail() {
   const vehicleId = Number(id)
   const [showKmForm, setShowKmForm] = useState(false)
   const [km, setKm] = useState('')
+  const [addingItem, setAddingItem] = useState(false)
 
   const vehicle = useQuery({
     queryKey: ['vehicle', vehicleId],
@@ -283,6 +383,18 @@ export default function VehicleDetail() {
       <h2 className="mt-5 mb-2 text-sm font-bold">Plan de mantenimiento</h2>
       {plan.isPending && <p className="text-sm text-muted">Cargando plan…</p>}
       {plan.data?.map((item) => <PlanItemCard key={item.id} vehicleId={vehicleId} item={item} />)}
+
+      {addingItem ? (
+        <AddPlanItemForm vehicleId={vehicleId} onDone={() => setAddingItem(false)} />
+      ) : (
+        <button
+          type="button"
+          onClick={() => setAddingItem(true)}
+          className="w-full rounded-2xl border-2 border-dashed border-muted/40 p-3 text-xs font-semibold text-muted hover:border-cyan/60 hover:text-cyan"
+        >
+          ＋ Agregar componente al plan
+        </button>
+      )}
     </div>
   )
 }

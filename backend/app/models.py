@@ -164,6 +164,22 @@ class LegalDocument(Base):
     )
 
 
+class MaintenanceComponent(Base):
+    """Catálogo de componentes mantenibles (motor, frenos, transmisión...) con
+    su intervalo típico. Sirve para el selector al agregar un ítem al plan de
+    cualquier vehículo — no depende de marca/modelo."""
+
+    __tablename__ = "maintenance_components"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(120), unique=True)
+    category: Mapped[str] = mapped_column(String(40))
+    default_interval_km: Mapped[int | None]
+    default_interval_months: Mapped[int | None]
+    notes: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+
+
 class CatalogMake(Base):
     """Marca de vehículo del catálogo propio (importado de NHTSA + agregados curados para Perú)."""
 

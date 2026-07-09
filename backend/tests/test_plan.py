@@ -27,7 +27,7 @@ def test_vehicle_creation_seeds_spec_and_plan(client, auth_headers):
     items = res.json()
     names = {i["name"] for i in items}
     assert "Aceite y filtro de motor" in names
-    assert len(items) == 5  # 5 items en la plantilla RAV4
+    assert len(items) == 16  # plantilla RAV4 (comprehensiva, feedback de talleres)
 
     oil = next(i for i in items if i["name"] == "Aceite y filtro de motor")
     assert oil["last_service_km"] == 48350
@@ -47,7 +47,7 @@ def test_generic_template_for_unknown_brand(client, auth_headers):
 
     res = client.get(f"/api/vehicles/{vehicle['id']}/plan", headers=auth_headers)
     items = res.json()
-    assert len(items) == 4  # plantilla genérica tiene 4 items
+    assert len(items) == 21  # plantilla genérica (comprehensiva, feedback de talleres)
 
 
 def test_progress_updates_with_odometer(client, auth_headers):

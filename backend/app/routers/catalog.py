@@ -1,7 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy import select
+from sqlalchemy.orm import Session
 
 from app.core.security import get_current_user
-from app.models import User
+from app.db import get_db
+from app.models import MaintenanceComponent, User
+from app.schemas import MaintenanceComponentOut
 from app.services import vehicle_catalog
 
 router = APIRouter(prefix="/api/catalog", tags=["catalog"])
@@ -23,3 +27,10 @@ def list_models(make: str, user: User = Depends(get_current_user)):
     if not make.strip():
         raise HTTPException(status.HTTP_400_BAD_REQUEST, "Falta indicar la marca")
     return vehicle_catalog.get_models(make.strip())
+
+
+@router.get("/components", response_model=list[MaintenanceComponentOut])
+def list_components(user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    return db.scalars(
+        select(MaintenanceComponent).order_by(MaintenanceComponent.category, MaintenanceComponent.name)
+    ).all()

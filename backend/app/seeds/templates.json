@@ -21,14 +21,25 @@
         "notes": "0W-16 sintético · API SN · 4.7 L con filtro. Talleres en Perú suelen recomendar cada 5,000 km por las condiciones de manejo locales; ajusta el intervalo si lo prefieres."
       },
       { "name": "Rotación de llantas", "interval_km": 10000, "interval_months": 6, "notes": null },
+      { "name": "Alineamiento y balanceo", "interval_km": 10000, "interval_months": 6, "notes": null },
       { "name": "Filtro de aire del motor", "interval_km": 30000, "interval_months": 24, "notes": null },
+      { "name": "Filtro de aire de cabina (polen)", "interval_km": 15000, "interval_months": 12, "notes": null },
       { "name": "Líquido de frenos", "interval_km": 40000, "interval_months": 24, "notes": null },
+      { "name": "Pastillas de freno delanteras", "interval_km": 40000, "interval_months": 24, "notes": null },
+      { "name": "Pastillas de freno traseras", "interval_km": 50000, "interval_months": 30, "notes": null },
+      { "name": "Discos de freno", "interval_km": 80000, "interval_months": null, "notes": "Revisar desgaste; normalmente dura 2 cambios de pastillas" },
       {
         "name": "Revisión de cadena de distribución",
         "interval_km": 100000,
         "interval_months": null,
         "notes": "Inspección; este motor no usa correa de reemplazo programado."
-      }
+      },
+      { "name": "Bujías", "interval_km": 80000, "interval_months": null, "notes": "Iridio (vida larga)" },
+      { "name": "Refrigerante / anticongelante", "interval_km": 40000, "interval_months": 24, "notes": null },
+      { "name": "Filtro de combustible", "interval_km": 40000, "interval_months": 24, "notes": null },
+      { "name": "Aceite de caja (transmisión CVT)", "interval_km": 60000, "interval_months": 48, "notes": "Algunos fabricantes indican 'de por vida'; se recomienda igual cada 60,000 km" },
+      { "name": "Batería", "interval_km": null, "interval_months": 36, "notes": null },
+      { "name": "Plumillas (limpiaparabrisas)", "interval_km": null, "interval_months": 12, "notes": null }
     ]
   },
   {
@@ -53,9 +64,20 @@
         "notes": "5W-20 sintético · 4.1 L con filtro. Uso severo (tráfico, viajes cortos): cada 6,000 km."
       },
       { "name": "Rotación de llantas", "interval_km": 10000, "interval_months": 6, "notes": null },
+      { "name": "Alineamiento y balanceo", "interval_km": 10000, "interval_months": 6, "notes": null },
       { "name": "Filtro de aire del motor", "interval_km": 20000, "interval_months": 24, "notes": null },
+      { "name": "Filtro de aire de cabina (polen)", "interval_km": 15000, "interval_months": 12, "notes": null },
       { "name": "Líquido de frenos", "interval_km": 40000, "interval_months": 24, "notes": null },
-      { "name": "Bujías", "interval_km": 100000, "interval_months": null, "notes": "Bujías de iridio (vida larga)" }
+      { "name": "Pastillas de freno delanteras", "interval_km": 40000, "interval_months": 24, "notes": null },
+      { "name": "Pastillas de freno traseras", "interval_km": 50000, "interval_months": 30, "notes": null },
+      { "name": "Discos de freno", "interval_km": 80000, "interval_months": null, "notes": "Revisar desgaste; normalmente dura 2 cambios de pastillas" },
+      { "name": "Bujías", "interval_km": 100000, "interval_months": null, "notes": "Bujías de iridio (vida larga)" },
+      { "name": "Correa de accesorios (alternador/AC)", "interval_km": 100000, "interval_months": null, "notes": "Revisar desde los 100,000 km" },
+      { "name": "Refrigerante / anticongelante", "interval_km": 40000, "interval_months": 24, "notes": null },
+      { "name": "Filtro de combustible", "interval_km": 40000, "interval_months": 24, "notes": null },
+      { "name": "Aceite de caja (transmisión)", "interval_km": 60000, "interval_months": 48, "notes": null },
+      { "name": "Batería", "interval_km": null, "interval_months": 36, "notes": null },
+      { "name": "Plumillas (limpiaparabrisas)", "interval_km": null, "interval_months": 12, "notes": null }
     ]
   },
   {
@@ -75,8 +97,25 @@
     "plan_items": [
       { "name": "Aceite y filtro de motor", "interval_km": 10000, "interval_months": 12, "notes": "Valor genérico; ajústalo con tu manual." },
       { "name": "Rotación de llantas", "interval_km": 10000, "interval_months": 6, "notes": null },
+      { "name": "Alineamiento y balanceo", "interval_km": 10000, "interval_months": 6, "notes": null },
       { "name": "Filtro de aire del motor", "interval_km": 20000, "interval_months": 24, "notes": null },
-      { "name": "Líquido de frenos", "interval_km": 40000, "interval_months": 24, "notes": null }
+      { "name": "Filtro de aire de cabina (polen)", "interval_km": 15000, "interval_months": 12, "notes": null },
+      { "name": "Bujías", "interval_km": 60000, "interval_months": null, "notes": "Cobre: cada 20,000-30,000 km · Iridio/platino: hasta 60,000-100,000 km" },
+      { "name": "Correa o cadena de distribución", "interval_km": 90000, "interval_months": 60, "notes": "Confirma con tu manual si tu motor usa correa (cambio obligatorio) o cadena (solo inspección)" },
+      { "name": "Correa de accesorios (alternador/AC)", "interval_km": 100000, "interval_months": null, "notes": null },
+      { "name": "Refrigerante / anticongelante", "interval_km": 40000, "interval_months": 24, "notes": null },
+      { "name": "Filtro de combustible", "interval_km": 40000, "interval_months": 24, "notes": null },
+      { "name": "Líquido de frenos", "interval_km": 40000, "interval_months": 24, "notes": null },
+      { "name": "Pastillas de freno delanteras", "interval_km": 40000, "interval_months": 24, "notes": null },
+      { "name": "Pastillas de freno traseras", "interval_km": 50000, "interval_months": 30, "notes": null },
+      { "name": "Discos de freno", "interval_km": 80000, "interval_months": null, "notes": "Revisar desgaste; normalmente dura 2 cambios de pastillas" },
+      { "name": "Aceite de caja (transmisión)", "interval_km": 60000, "interval_months": 48, "notes": "Automática o manual según tu auto" },
+      { "name": "Aceite de diferencial", "interval_km": 40000, "interval_months": 24, "notes": "Solo si tu auto es 4x4 o AWD" },
+      { "name": "Líquido de dirección hidráulica", "interval_km": 50000, "interval_months": 48, "notes": "No aplica si tu auto tiene dirección eléctrica (EPS)" },
+      { "name": "Amortiguadores", "interval_km": 80000, "interval_months": null, "notes": "Revisión; cambiar si hay fugas o rebote excesivo" },
+      { "name": "Rótulas y terminales de dirección", "interval_km": 60000, "interval_months": null, "notes": null },
+      { "name": "Batería", "interval_km": null, "interval_months": 36, "notes": null },
+      { "name": "Plumillas (limpiaparabrisas)", "interval_km": null, "interval_months": 12, "notes": null }
     ]
   }
 ]

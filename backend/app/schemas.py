@@ -264,3 +264,15 @@ class AlertOut(BaseModel):
     vehicle_id: int | None = None
     driver_id: int | None = None
     days_remaining: int | None = None
+
+
+# --- Catálogo de componentes mantenibles ---
+class MaintenanceComponentOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    name: str
+    category: str
+    default_interval_km: int | None
+    default_interval_months: int | None
+    notes: str | None

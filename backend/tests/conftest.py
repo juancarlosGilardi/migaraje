@@ -6,6 +6,8 @@ from sqlalchemy.pool import StaticPool
 
 from app.db import Base, get_db
 from app.main import app
+from app.models import MaintenanceComponent
+from app.seeds.maintenance_components import COMPONENTS
 
 engine = create_engine(
     "sqlite://",
@@ -29,6 +31,13 @@ app.dependency_overrides[get_db] = override_get_db
 @pytest.fixture()
 def client():
     Base.metadata.create_all(engine)
+    db = TestingSession()
+    db.add_all(
+        MaintenanceComponent(name=name, category=cat, default_interval_km=km, default_interval_months=mo, notes=notes)
+        for name, cat, km, mo, notes in COMPONENTS
+    )
+    db.commit()
+    db.close()
     yield TestClient(app)
     Base.metadata.drop_all(engine)
 
