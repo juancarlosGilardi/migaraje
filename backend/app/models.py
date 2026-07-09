@@ -30,6 +30,9 @@ class User(Base):
     vehicles: Mapped[list["Vehicle"]] = relationship(
         back_populates="owner", cascade="all, delete-orphan"
     )
+    drivers: Mapped[list["Driver"]] = relationship(
+        back_populates="owner", cascade="all, delete-orphan"
+    )
 
 
 class Vehicle(Base):
@@ -56,6 +59,9 @@ class Vehicle(Base):
         back_populates="vehicle", cascade="all, delete-orphan"
     )
     service_records: Mapped[list["ServiceRecord"]] = relationship(
+        back_populates="vehicle", cascade="all, delete-orphan"
+    )
+    legal_documents: Mapped[list["LegalDocument"]] = relationship(
         back_populates="vehicle", cascade="all, delete-orphan"
     )
 
@@ -120,6 +126,42 @@ class ServiceFile(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
     service_record: Mapped[ServiceRecord] = relationship(back_populates="files")
+
+
+class Driver(Base):
+    """Conductor (no necesariamente el dueño de la cuenta) — para el brevete."""
+
+    __tablename__ = "drivers"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
+    name: Mapped[str] = mapped_column(String(120))
+    license_class: Mapped[str] = mapped_column(String(20), default="A-I")
+    license_expiry: Mapped[date | None] = mapped_column(Date, nullable=True)
+    birth_date: Mapped[date | None] = mapped_column(Date, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+
+    owner: Mapped[User] = relationship(back_populates="drivers")
+
+
+class LegalDocument(Base):
+    """SOAT o revisión técnica (CITV) de un vehículo. El impuesto vehicular no
+    se guarda aquí: se calcula al vuelo desde Vehicle.first_registration_year."""
+
+    __tablename__ = "legal_documents"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    vehicle_id: Mapped[int] = mapped_column(ForeignKey("vehicles.id"), index=True)
+    doc_type: Mapped[str] = mapped_column(String(20))  # 'soat' | 'citv'
+    reference_number: Mapped[str | None] = mapped_column(String(60), nullable=True)
+    expiry_date: Mapped[date] = mapped_column(Date)
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+
+    vehicle: Mapped[Vehicle] = relationship(back_populates="legal_documents")
+
+    __table_args__ = (
+        UniqueConstraint("vehicle_id", "doc_type", name="uq_legal_document_vehicle_type"),
+    )
 
 
 class CatalogMake(Base):

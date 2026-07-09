@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api, ApiError } from '../api/client'
@@ -235,9 +235,15 @@ export default function Garage() {
     retry: (count, error) => (error as ApiError).status !== 401 && count < 2,
   })
 
-  if (vehicles.isError && (vehicles.error as ApiError).status === 401) {
-    clearSession()
-    navigate('/login', { replace: true })
+  const sessionExpired = vehicles.isError && (vehicles.error as ApiError).status === 401
+  useEffect(() => {
+    if (sessionExpired) {
+      clearSession()
+      navigate('/login', { replace: true })
+    }
+  }, [sessionExpired, navigate])
+
+  if (sessionExpired) {
     return null
   }
 
@@ -248,16 +254,25 @@ export default function Garage() {
           <p className="text-sm text-muted">Hola, {user?.name ?? 'conductor'} 👋</p>
           <h1 className="font-display text-3xl font-bold tracking-tight">Tu garaje</h1>
         </div>
-        <button
-          type="button"
-          onClick={() => {
-            clearSession()
-            navigate('/login', { replace: true })
-          }}
-          className="rounded-full border border-line px-3 py-1.5 text-xs font-semibold text-muted hover:text-red"
-        >
-          Salir
-        </button>
+        <div className="flex shrink-0 gap-2">
+          <button
+            type="button"
+            onClick={() => navigate('/papeles')}
+            className="rounded-full border border-cyan/40 bg-cyan/10 px-3 py-1.5 text-xs font-bold text-cyan"
+          >
+            🪪 Papeles
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              clearSession()
+              navigate('/login', { replace: true })
+            }}
+            className="rounded-full border border-line px-3 py-1.5 text-xs font-semibold text-muted hover:text-red"
+          >
+            Salir
+          </button>
+        </div>
       </header>
 
       <div className="mt-5 flex flex-col gap-3">

@@ -94,3 +94,48 @@ export type ServiceRecord = {
   has_xml: boolean
   files: ServiceFile[]
 }
+
+// --- Papeles: conductores y documentos legales ---
+export type DocStatus = 'ok' | 'warn' | 'critical' | 'overdue' | 'unknown'
+
+export type Driver = {
+  id: number
+  name: string
+  license_class: string
+  license_expiry: string | null
+  birth_date: string | null
+  has_data: boolean
+  days_remaining: number | null
+  status: DocStatus
+  age: number | null
+  renewal_period_years: number | null
+}
+
+export type LegalDocument = {
+  doc_type: string
+  reference_number: string | null
+  expiry_date: string | null
+  has_data: boolean
+  has_history: boolean | null
+  days_remaining: number | null
+  status: DocStatus
+  message: string | null
+  first_due_year: number | null
+}
+
+export type ImpuestoVehicular = {
+  applicable: boolean | null
+  reason: string | null
+  year_index: number | null
+  quota_number: number | null
+  next_due_date: string | null
+  days_remaining: number | null
+  status: DocStatus
+  message: string | null
+}
+
+export type VehicleDocuments = {
+  soat: LegalDocument
+  citv: LegalDocument
+  impuesto_vehicular: ImpuestoVehicular
+}

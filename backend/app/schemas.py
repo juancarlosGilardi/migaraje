@@ -186,3 +186,70 @@ class ServiceRecordOut(BaseModel):
     has_pdf: bool = False
     has_xml: bool = False
     files: list[ServiceFileOut] = []
+
+
+# --- Papeles: conductores (brevete) ---
+class DriverIn(BaseModel):
+    name: str = Field(min_length=2, max_length=120)
+    license_class: str = Field(default="A-I", max_length=20)
+    license_expiry: date | None = None
+    birth_date: date | None = None
+
+
+class DriverUpdate(BaseModel):
+    name: str | None = Field(default=None, min_length=2, max_length=120)
+    license_class: str | None = Field(default=None, max_length=20)
+    license_expiry: date | None = None
+    birth_date: date | None = None
+
+
+class DriverOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    name: str
+    license_class: str
+    license_expiry: date | None
+    birth_date: date | None
+    has_data: bool = False
+    days_remaining: int | None = None
+    status: str = "unknown"
+    age: int | None = None
+    renewal_period_years: int | None = None
+
+
+# --- Papeles: SOAT / revisión técnica / impuesto vehicular ---
+class LegalDocumentIn(BaseModel):
+    reference_number: str | None = Field(default=None, max_length=60)
+    expiry_date: date
+
+
+class LegalDocumentOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    doc_type: str
+    reference_number: str | None = None
+    expiry_date: date | None = None
+    has_data: bool = False
+    has_history: bool | None = None
+    days_remaining: int | None = None
+    status: str = "unknown"
+    message: str | None = None
+    first_due_year: int | None = None
+
+
+class ImpuestoVehicularOut(BaseModel):
+    applicable: bool | None
+    reason: str | None = None
+    year_index: int | None = None
+    quota_number: int | None = None
+    next_due_date: date | None = None
+    days_remaining: int | None = None
+    status: str = "unknown"
+    message: str | None = None
+
+
+class VehicleDocumentsOut(BaseModel):
+    soat: LegalDocumentOut
+    citv: LegalDocumentOut
+    impuesto_vehicular: ImpuestoVehicularOut
